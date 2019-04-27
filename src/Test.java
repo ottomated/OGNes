@@ -11,7 +11,6 @@ public class Test {
 
     private Test() {
         cpu = new Cpu();
-
     }
 
     private void run() {
