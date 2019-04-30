@@ -93,7 +93,7 @@ public class Cpu {
 
     public void reset() {
         memory = new int[0x10000];
-        status = 0;
+        status = 0b00101000;
 
         int i;
 
@@ -103,16 +103,14 @@ public class Cpu {
         }
 
         // Clear memory
-        for (i = 0x2000; i <= 0x8000; i++) {
+        for (i = 0x2001; i < memory.length; i++) {
             this.memory[i] = 0;
         }
-
-        // Load program
-        memory[0x5757] = 0x7D;
-        memory[0x5758] = 0x57;
-        memory[0x5759] = 0x57;
-
-        pc = 0x5757;
+        pc = 0x8000;
+        sp = 0x01ff;
+    }
+    public void loadProgram(int[] data) {
+        System.arraycopy(data, 0, memory, 0x8000, data.length);
     }
 
     public void cycle() {
