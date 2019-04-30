@@ -25,12 +25,51 @@ public class Cpu {
     // 6 => Overflow (if previous instruction resulted in an invalid two's complement)
     // 7 => Negative
     public int status;
-    public boolean carry;
-    public boolean zero;
-    public boolean interruptDisable;
-    public boolean decimalMode;
-    public boolean overflow;
-    public boolean negative;
+
+    public void setCarry(boolean b) {
+        setStatusAt(b, 0);
+    }
+    public void setZero(boolean b) {
+        setStatusAt(b, 1);
+    }
+    public void setInterruptDisable(boolean b) {
+        setStatusAt(b, 2);
+    }
+    public void setDecimalMode(boolean b) {
+        setStatusAt(b, 3);
+    }
+    public void setOverflow(boolean b) {
+        setStatusAt(b, 6);
+    }
+    public void setNegative(boolean b) {
+        setStatusAt(b, 7);
+    }
+    public boolean getCarry() {
+        return getStatusAt(0);
+    }
+    public boolean getZero() {
+        return getStatusAt(1);
+    }
+    public boolean getInterruptDisable() {
+        return getStatusAt(2);
+    }
+    public boolean getDecimalMode() {
+        return getStatusAt(3);
+    }
+    public boolean getOverflow() {
+        return getStatusAt(6);
+    }
+    public boolean getNegative() {
+        return getStatusAt(7);
+    }
+
+    private void setStatusAt(boolean b, int i) {
+        status = b ? status | (1 << i)
+                : status & ~(1 << i);
+    }
+    private boolean getStatusAt(int i) {
+        return ((status >> i) & 1) == 1;
+    }
 
     private enum Interrupt {IRQ, NMI, RESET}
 
@@ -54,12 +93,7 @@ public class Cpu {
 
     public void reset() {
         memory = new int[0x10000];
-        carry = false;
-        zero = false;
-        interruptDisable = false;
-        decimalMode = false;
-        overflow = false;
-        negative = false;
+        status = 0;
 
         int i;
 
@@ -74,8 +108,10 @@ public class Cpu {
         }
 
         // Load program
-        memory[0x5757] = 0x69;
+        memory[0x5757] = 0x7D;
         memory[0x5758] = 0x57;
+        memory[0x5759] = 0x57;
+
         pc = 0x5757;
     }
 
@@ -94,5 +130,18 @@ public class Cpu {
 
     public int peek(int loc) {
         return this.memory[loc];
+    }
+
+    @Override
+    public String toString() {
+        return "===== CPU =====\n" +
+                "PC: $" + Integer.toHexString(pc) +
+                "  memory[pc]: $" + Integer.toHexString(memory[pc]) + "\n" +
+                "SP: $" + Integer.toHexString(sp) + "\n" +
+                "X:  $" + Integer.toHexString(x) + "\n" +
+                "Y:  $" + Integer.toHexString(y) + "\n" +
+                "A:  $" + Integer.toHexString(a) + "\n" +
+                "STATUS: 0b" + Integer.toBinaryString(status) + "\n" +
+                "Current intruction: " + instruction;
     }
 }
