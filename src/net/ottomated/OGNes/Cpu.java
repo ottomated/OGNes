@@ -75,22 +75,6 @@ public class Cpu {
 
     private Interrupt interrupt;
 
-    public enum AddressingMode {
-        ZERO_PAGE,
-        INDEXED_ZERO_PAGE_X,
-        INDEXED_ZERO_PAGE_Y,
-        ABSOLUTE,
-        INDEXED_ABSOLUTE_X,
-        INDEXED_ABSOLUTE_Y,
-        IMPLIED,
-        ACCUMULATOR,
-        IMMEDIATE,
-        RELATIVE,
-        INDEXED_INDIRECT,
-        INDIRECT_INDEXED,
-        INDIRECT
-    }
-
     public void reset() {
         memory = new int[0x10000];
         status = 0b00101000;
