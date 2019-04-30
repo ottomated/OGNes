@@ -8,3 +8,4 @@ Resources:
 - [Instructions](http://www.obelisk.me.uk/6502/reference.html)
 - [Documentation](http://nesdev.com/NESDoc.pdf)
 - [Reference](http://wiki.nesdev.com/w/index.php/NES_reference_guide)
+- [Instruction Timings](http://atarihq.com/danb/files/64doc.txt)
