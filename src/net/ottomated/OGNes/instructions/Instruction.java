@@ -41,4 +41,9 @@ public abstract class Instruction {
                 return null;
         }
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[" + c + "/" + length + "]";
+    }
 }
