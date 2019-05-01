@@ -6,11 +6,19 @@ public class Test {
         Cpu cpu = new Cpu();
         cpu.reset();
         Expect.A.toBe(cpu, 0);
-        cpu.loadProgram(new int[]{0x69, 0x50});
+        cpu.loadProgram(new int[]{0x69, 0x50, 0x2D, 0x00, 0x80});
         cpu.cycle();
         Expect.A.toBe(cpu, 0);
         cpu.cycle();
         Expect.A.toBe(cpu, 0x50);
+        cpu.cycle();
+        Expect.A.toBe(cpu, 0x50);
+        cpu.cycle();
+        Expect.A.toBe(cpu, 0x50);
+        cpu.cycle();
+        Expect.A.toBe(cpu, 0x50);
+        cpu.cycle();
+        Expect.A.toBe(cpu, 0x50 & 0x69);
 
         System.out.println("Success!");
     }
