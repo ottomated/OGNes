@@ -84,6 +84,8 @@ public abstract class Instruction {
                 return new ASL(cpu, AddressingMode.ABSOLUTE);
             case 0x1e:
                 return new ASL(cpu, AddressingMode.INDEXED_ABSOLUTE_X);
+            case 0x90:
+                return new BCC(cpu, AddressingMode.RELATIVE);
             default:
                 System.out.println("Unimplemented opcode " + Integer.toHexString(opcode));
                 return null;
