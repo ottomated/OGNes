@@ -1,61 +1,50 @@
 package net.ottomated.OGNes;
 
-import java.lang.reflect.Method;
-
 public class Test {
 
-    private Cpu cpu;
-
     public static void main(String[] args) {
-        Test t = new Test();
-        t.run();
-    }
-
-    private Test() {
-        cpu = new Cpu();
+        Cpu cpu = new Cpu();
         cpu.reset();
+        Expect.A.toBe(cpu, 0);
+        cpu.loadProgram(new int[]{0x69, 0x50});
         cpu.cycle();
-        System.out.println(cpu.a);
+        Expect.A.toBe(cpu, 0);
         cpu.cycle();
-        System.out.println(cpu.a);
+        Expect.A.toBe(cpu, 0x50);
+
+        System.out.println("Success!");
     }
 
-    private void run() {
-
-        // For each method of the cpu
-        for (Method m : cpu.getClass().getDeclaredMethods()) {
-            CpuInstruction desc = m.getAnnotation(CpuInstruction.class);
-            // If the method is annotated
-            if (desc != null) {
-                try {
-                    // Get the corresponding test method
-                    Method testMethod = Test.class.getMethod("test" + desc.name(), Cpu.class, Method.class);
-
-                    System.out.println("Testing CPU instruction \"" + desc.name() + "\"");
-                    System.out.println("> " + desc.description());
-
-                    // Call the test method on our cpu object
-                    testMethod.invoke(this, cpu, m);
-                } catch (NoSuchMethodException e) {
-                    System.out.println("No test defined for instruction " + desc.name());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+    private static class Expect {
+        static class X {
+            static void toBe(Cpu c, int x) {
+                assert c.x == x : "Register X should be " + x + ", was " + c.x;
             }
         }
 
-    }
+        static class Y {
+            static void toBe(Cpu c, int y) {
+                assert c.y == y : "Register Y should be " + y + ", was " + c.y;
+            }
+        }
 
-    private <T> boolean expectResult(Method m, T expected, Object... params) {
-        try {
-            T actual = (T) m.invoke(cpu, params);
-            return actual.equals(expected);
-        } catch (Exception e) {
-            return false;
+        static class A {
+            static void toBe(Cpu c, int a) {
+                assert c.a == a : "Accumulator should be " + a + ", was " + c.a;
+            }
+        }
+
+        static class PC {
+            static void toBe(Cpu c, int pc) {
+                assert c.pc == pc : "Program Counter should be " + pc + ", was " + c.pc;
+            }
+        }
+
+        static class SP {
+            static void toBe(Cpu c, int sp) {
+                assert c.sp == sp : "Stack Pointer should be " + sp + ", was " + c.sp;
+            }
         }
     }
 
-    public void testAND(Method original) {
-        System.out.println(expectResult(original, 0b111001, 0b111101, 0b111011));
-    }
 }
