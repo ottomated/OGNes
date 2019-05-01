@@ -32,7 +32,12 @@ public abstract class Instruction {
 
     Step[] steps;
 
-    public abstract void cycle();
+    public void cycle() {
+        steps[c].go();
+        c++;
+        if (length == c)
+            done = true;
+    }
 
     public static Instruction parse(Cpu cpu) {
         int opcode = cpu.pop();
@@ -69,6 +74,16 @@ public abstract class Instruction {
                 return new AND(cpu, AddressingMode.INDEXED_INDIRECT);
             case 0x31:
                 return new AND(cpu, AddressingMode.INDIRECT_INDEXED);
+            case 0x0a:
+                return new ASL(cpu, AddressingMode.ACCUMULATOR);
+            case 0x06:
+                return new ASL(cpu, AddressingMode.ZERO_PAGE);
+            case 0x16:
+                return new ASL(cpu, AddressingMode.INDEXED_ZERO_PAGE_X);
+            case 0x0e:
+                return new ASL(cpu, AddressingMode.ABSOLUTE);
+            case 0x1e:
+                return new ASL(cpu, AddressingMode.INDEXED_ABSOLUTE_X);
             default:
                 System.out.println("Unimplemented opcode " + Integer.toHexString(opcode));
                 return null;

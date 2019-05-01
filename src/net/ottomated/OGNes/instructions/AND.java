@@ -18,13 +18,5 @@ class AND extends ReadInstruction {
         done = false;
         this.mode = mode;
     }
-
-    @Override
-    public void cycle() {
-        steps[c].go();
-        c++;
-        if (length == c)
-            done = true;
-
-    }
 }
+

@@ -22,12 +22,4 @@ class ADC extends ReadInstruction {
         this.mode = mode;
     }
 
-    @Override
-    public void cycle() {
-        steps[c].go();
-        c++;
-        if (length == c)
-            done = true;
-
-    }
 }
