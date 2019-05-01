@@ -114,6 +114,10 @@ public class Cpu {
         return this.memory[loc];
     }
 
+    public void set(int loc, int b) {
+        this.memory[loc] = b;
+    }
+
     @Override
     public String toString() {
         return "===== CPU =====\n" +
