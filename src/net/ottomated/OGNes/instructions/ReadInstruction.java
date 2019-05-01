@@ -39,7 +39,7 @@ abstract class ReadInstruction extends Instruction {
                         () -> loc = cpu.pop(),
                         () -> {
                             loc += cpu.x;
-                            loc %= 0x100;
+                            loc &= 0xff;
                         },
                         () -> {
                             m = cpu.peek(loc);
