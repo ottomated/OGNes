@@ -10,6 +10,7 @@ abstract class ReadModWriteInstruction extends Instruction {
     int pointer; // Used for indexed indirect, pointer in zero-page to memory location
 
     abstract void finalStep();
+
     abstract void finalAccumulatorStep();
 
     ReadModWriteInstruction(AddressingMode mode) {
@@ -26,7 +27,8 @@ abstract class ReadModWriteInstruction extends Instruction {
                 steps = new Step[]{
                         () -> loc = cpu.pop(),
                         () -> m = cpu.peek(loc),
-                        () -> {},
+                        () -> {
+                        },
                         this::finalStep,
                 };
                 break;
@@ -39,7 +41,8 @@ abstract class ReadModWriteInstruction extends Instruction {
                             loc &= 0xff;
                         },
                         () -> m = cpu.peek(loc),
-                        () -> {},
+                        () -> {
+                        },
                         this::finalStep
                 };
                 break;
@@ -48,8 +51,12 @@ abstract class ReadModWriteInstruction extends Instruction {
                 steps = new Step[]{
                         () -> loc = cpu.pop(),
                         () -> high = cpu.pop(),
-                        () -> m = cpu.peek(loc + high * 256),
-                        () -> {},
+                        () -> {
+                            loc = loc + high * 256;
+                            m = cpu.peek(loc);
+                        },
+                        () -> {
+                        },
                         this::finalStep
                 };
                 break;
@@ -68,9 +75,11 @@ abstract class ReadModWriteInstruction extends Instruction {
                                 high++;
                                 return;
                             }
-                            m = cpu.peek(loc + high * 256);
+                            loc = loc + high * 256;
+                            m = cpu.peek(loc);
                         },
-                        () -> {},
+                        () -> {
+                        },
                         this::finalStep
                 };
                 break;
