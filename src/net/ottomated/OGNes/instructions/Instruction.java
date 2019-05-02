@@ -86,6 +86,68 @@ public abstract class Instruction {
                 return new ASL(cpu, AddressingMode.INDEXED_ABSOLUTE_X);
             case 0x90:
                 return new BCC(cpu, AddressingMode.RELATIVE);
+            case 0xB0:
+                return new BCS(cpu, AddressingMode.RELATIVE);
+            case 0xF0:
+                return new BEQ(cpu, AddressingMode.RELATIVE);
+            case 0x30:
+                return new BMI(cpu, AddressingMode.RELATIVE);
+            case 0xD0:
+                return new BNE(cpu, AddressingMode.RELATIVE);
+            case 0x10:
+                return new BPL(cpu, AddressingMode.RELATIVE);
+            case 0x50:
+                return new BVC(cpu, AddressingMode.RELATIVE);
+            case 0x70:
+                return new BVS(cpu, AddressingMode.RELATIVE);
+            case 0x49:
+                return new EOR(cpu, AddressingMode.IMMEDIATE);
+            case 0x45:
+                return new EOR(cpu, AddressingMode.ZERO_PAGE);
+            case 0x55:
+                return new EOR(cpu, AddressingMode.INDEXED_ZERO_PAGE_X);
+            case 0x4D:
+                return new EOR(cpu, AddressingMode.ABSOLUTE);
+            case 0x5D:
+                return new EOR(cpu, AddressingMode.INDEXED_ABSOLUTE_X);
+            case 0x59:
+                return new EOR(cpu, AddressingMode.INDEXED_ABSOLUTE_Y);
+            case 0x41:
+                return new EOR(cpu, AddressingMode.INDEXED_INDIRECT);
+            case 0x51:
+                return new EOR(cpu, AddressingMode.INDIRECT_INDEXED);
+            case 0xA9:
+                return new LDA(cpu, AddressingMode.IMMEDIATE);
+            case 0xA5:
+                return new LDA(cpu, AddressingMode.ZERO_PAGE);
+            case 0xB5:
+                return new LDA(cpu, AddressingMode.INDEXED_ZERO_PAGE_X);
+            case 0xAD:
+                return new LDA(cpu, AddressingMode.ABSOLUTE);
+            case 0xBD:
+                return new LDA(cpu, AddressingMode.INDEXED_ABSOLUTE_X);
+            case 0xB9:
+                return new LDA(cpu, AddressingMode.INDEXED_ABSOLUTE_Y);
+            case 0xA1:
+                return new LDA(cpu, AddressingMode.INDEXED_INDIRECT);
+            case 0xB1:
+                return new LDA(cpu, AddressingMode.INDIRECT_INDEXED);
+            case 0x09:
+                return new ORA(cpu, AddressingMode.IMMEDIATE);
+            case 0x05:
+                return new ORA(cpu, AddressingMode.ZERO_PAGE);
+            case 0x15:
+                return new ORA(cpu, AddressingMode.INDEXED_ZERO_PAGE_X);
+            case 0x0D:
+                return new ORA(cpu, AddressingMode.ABSOLUTE);
+            case 0x1D:
+                return new ORA(cpu, AddressingMode.INDEXED_ABSOLUTE_X);
+            case 0x19:
+                return new ORA(cpu, AddressingMode.INDEXED_ABSOLUTE_Y);
+            case 0x01:
+                return new ORA(cpu, AddressingMode.INDEXED_INDIRECT);
+            case 0x11:
+                return new ORA(cpu, AddressingMode.INDIRECT_INDEXED);
             default:
                 System.out.println("Unimplemented opcode " + Integer.toHexString(opcode));
                 return null;
