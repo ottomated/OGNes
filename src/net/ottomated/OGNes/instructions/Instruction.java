@@ -148,6 +148,10 @@ public abstract class Instruction {
                 return new ORA(cpu, AddressingMode.INDEXED_INDIRECT);
             case 0x11:
                 return new ORA(cpu, AddressingMode.INDIRECT_INDEXED);
+            case 0x24:
+                return new BIT(cpu, AddressingMode.ZERO_PAGE);
+            case 0x2C:
+                return new BIT(cpu, AddressingMode.ABSOLUTE);
             default:
                 System.out.println("Unimplemented opcode " + Integer.toHexString(opcode));
                 return null;
