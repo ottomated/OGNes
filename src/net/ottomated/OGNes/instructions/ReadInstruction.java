@@ -104,14 +104,10 @@ abstract class ReadInstruction extends Instruction {
                         () -> pointer = cpu.pop(),
                         () -> {
                             pointer += cpu.x;
-                            pointer %= 256;
+                            pointer &= 0xff;
                         },
-                        () -> {
-                            loc = cpu.peek(pointer);
-                        },
-                        () -> {
-                            high = cpu.peek(pointer + 1);
-                        },
+                        () -> loc = cpu.peek(pointer),
+                        () -> high = cpu.peek(pointer + 1),
                         () -> {
                             m = cpu.peek(loc + high * 256);
                             finalStep();
