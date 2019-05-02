@@ -2,13 +2,13 @@ package net.ottomated.OGNes.instructions;
 
 import net.ottomated.OGNes.Cpu;
 
-public class BCC extends BranchInstruction {
+public class BEQ extends BranchInstruction {
 
     boolean shouldBranch() {
-        return !cpu.getCarry();
+        return cpu.getZero();
     }
 
-    BCC(Cpu cpu, AddressingMode mode) {
+    BEQ(Cpu cpu, AddressingMode mode) {
         super(mode);
         this.cpu = cpu;
         done = false;
