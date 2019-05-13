@@ -38,6 +38,9 @@ public class Cpu {
     public void setDecimalMode(boolean b) {
         setStatusAt(b, 3);
     }
+    public void setBreak(boolean b) {
+        setStatusAt(b, 4);
+    }
     public void setOverflow(boolean b) {
         setStatusAt(b, 6);
     }
@@ -55,6 +58,9 @@ public class Cpu {
     }
     public boolean getDecimalMode() {
         return getStatusAt(3);
+    }
+    public boolean getBreak() {
+        return getStatusAt(4);
     }
     public boolean getOverflow() {
         return getStatusAt(6);
@@ -103,6 +109,19 @@ public class Cpu {
         } else {
             instruction.cycle();
         }
+    }
+
+    public void pushStack(int b) {
+        this.memory[sp] = b;
+        sp--;
+        if (sp < 0x0100) sp = 0x01ff;
+        else if (sp > 0x01ff) sp = 0x0100;
+    }
+    public int popStack() {
+        sp++;
+        if (sp < 0x0100) sp = 0x01ff;
+        else if (sp > 0x01ff) sp = 0x0100;
+        return this.memory[sp];
     }
 
     public int pop() {
