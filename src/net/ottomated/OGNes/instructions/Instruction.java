@@ -152,6 +152,8 @@ public abstract class Instruction {
                 return new BIT(cpu, AddressingMode.ZERO_PAGE);
             case 0x2C:
                 return new BIT(cpu, AddressingMode.ABSOLUTE);
+            case 0x00:
+                return new BRK(cpu, AddressingMode.IMPLIED);
             default:
                 System.out.println("Unimplemented opcode " + Integer.toHexString(opcode));
                 return null;
