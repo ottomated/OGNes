@@ -156,6 +156,12 @@ public abstract class Instruction {
                 return new BRK(cpu, AddressingMode.IMPLIED);
             case 0x18:
                 return new CLC(cpu, AddressingMode.IMPLIED);
+            case 0xD8:
+                return new CLD(cpu, AddressingMode.IMPLIED);
+            case 0x58:
+                return new CLI(cpu, AddressingMode.IMPLIED);
+            case 0xB8:
+                return new CLV(cpu, AddressingMode.IMPLIED);
             default:
                 System.out.println("Unimplemented opcode " + Integer.toHexString(opcode));
                 return null;
