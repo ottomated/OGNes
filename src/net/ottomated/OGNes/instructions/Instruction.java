@@ -58,6 +58,22 @@ public abstract class Instruction {
                 return new ADC(cpu, AddressingMode.INDEXED_INDIRECT);
             case 0x71:
                 return new ADC(cpu, AddressingMode.INDIRECT_INDEXED);
+            case 0xE9:
+                return new SBC(cpu, AddressingMode.IMMEDIATE);
+            case 0xE5:
+                return new SBC(cpu, AddressingMode.ZERO_PAGE);
+            case 0xF5:
+                return new SBC(cpu, AddressingMode.INDEXED_ZERO_PAGE_X);
+            case 0xED:
+                return new SBC(cpu, AddressingMode.ABSOLUTE);
+            case 0xFD:
+                return new SBC(cpu, AddressingMode.INDEXED_ABSOLUTE_X);
+            case 0xF9:
+                return new SBC(cpu, AddressingMode.INDEXED_ABSOLUTE_Y);
+            case 0xE1:
+                return new SBC(cpu, AddressingMode.INDEXED_INDIRECT);
+            case 0xF1:
+                return new SBC(cpu, AddressingMode.INDIRECT_INDEXED);
             case 0x29:
                 return new AND(cpu, AddressingMode.IMMEDIATE);
             case 0x25:
@@ -100,6 +116,34 @@ public abstract class Instruction {
                 return new BVC(cpu, AddressingMode.RELATIVE);
             case 0x70:
                 return new BVS(cpu, AddressingMode.RELATIVE);
+            case 0xC9:
+                return new CMP(cpu, AddressingMode.IMMEDIATE);
+            case 0xC5:
+                return new CMP(cpu, AddressingMode.ZERO_PAGE);
+            case 0xD5:
+                return new CMP(cpu, AddressingMode.INDEXED_ZERO_PAGE_X);
+            case 0xCD:
+                return new CMP(cpu, AddressingMode.ABSOLUTE);
+            case 0xDD:
+                return new CMP(cpu, AddressingMode.INDEXED_ABSOLUTE_X);
+            case 0xD9:
+                return new CMP(cpu, AddressingMode.INDEXED_ABSOLUTE_Y);
+            case 0xC1:
+                return new CMP(cpu, AddressingMode.INDEXED_INDIRECT);
+            case 0xD1:
+                return new CMP(cpu, AddressingMode.INDIRECT_INDEXED);
+            case 0xC0:
+                return new CPY(cpu, AddressingMode.IMMEDIATE);
+            case 0xC4:
+                return new CPY(cpu, AddressingMode.ZERO_PAGE);
+            case 0xCC:
+                return new CPY(cpu, AddressingMode.ABSOLUTE);
+            case 0xE0:
+                return new CPX(cpu, AddressingMode.IMMEDIATE);
+            case 0xE4:
+                return new CPX(cpu, AddressingMode.ZERO_PAGE);
+            case 0xEC:
+                return new CPX(cpu, AddressingMode.ABSOLUTE);
             case 0x49:
                 return new EOR(cpu, AddressingMode.IMMEDIATE);
             case 0x45:
@@ -132,6 +176,26 @@ public abstract class Instruction {
                 return new LDA(cpu, AddressingMode.INDEXED_INDIRECT);
             case 0xB1:
                 return new LDA(cpu, AddressingMode.INDIRECT_INDEXED);
+            case 0xA2:
+                return new LDX(cpu, AddressingMode.IMMEDIATE);
+            case 0xA6:
+                return new LDX(cpu, AddressingMode.ZERO_PAGE);
+            case 0xB6:
+                return new LDX(cpu, AddressingMode.INDEXED_ZERO_PAGE_Y);
+            case 0xAE:
+                return new LDX(cpu, AddressingMode.ABSOLUTE);
+            case 0xBE:
+                return new LDX(cpu, AddressingMode.INDEXED_ABSOLUTE_Y);
+            case 0xA0:
+                return new LDY(cpu, AddressingMode.IMMEDIATE);
+            case 0xA4:
+                return new LDY(cpu, AddressingMode.ZERO_PAGE);
+            case 0xB4:
+                return new LDY(cpu, AddressingMode.INDEXED_ZERO_PAGE_X);
+            case 0xAC:
+                return new LDY(cpu, AddressingMode.ABSOLUTE);
+            case 0xBC:
+                return new LDY(cpu, AddressingMode.INDEXED_ABSOLUTE_X);
             case 0x09:
                 return new ORA(cpu, AddressingMode.IMMEDIATE);
             case 0x05:
@@ -162,6 +226,47 @@ public abstract class Instruction {
                 return new CLI(cpu, AddressingMode.IMPLIED);
             case 0xB8:
                 return new CLV(cpu, AddressingMode.IMPLIED);
+            case 0x2A:
+                return new ROL(cpu, AddressingMode.ACCUMULATOR);
+            case 0x26:
+                return new ROL(cpu, AddressingMode.ZERO_PAGE);
+            case 0x36:
+                return new ROL(cpu, AddressingMode.INDEXED_ZERO_PAGE_X);
+            case 0x2E:
+                return new ROL(cpu, AddressingMode.ABSOLUTE);
+            case 0x3E:
+                return new ROL(cpu, AddressingMode.INDEXED_ABSOLUTE_X);
+            case 0x6A:
+                return new ROR(cpu, AddressingMode.ACCUMULATOR);
+            case 0x66:
+                return new ROR(cpu, AddressingMode.ZERO_PAGE);
+            case 0x76:
+                return new ROR(cpu, AddressingMode.INDEXED_ZERO_PAGE_X);
+            case 0x6E:
+                return new ROR(cpu, AddressingMode.ABSOLUTE);
+            case 0x7E:
+                return new ROR(cpu, AddressingMode.INDEXED_ABSOLUTE_X);
+            case 0xC6:
+                return new DEC(cpu, AddressingMode.ZERO_PAGE);
+            case 0xD6:
+                return new DEC(cpu, AddressingMode.INDEXED_ZERO_PAGE_X);
+            case 0xCE:
+                return new DEC(cpu, AddressingMode.ABSOLUTE);
+            case 0xDE:
+                return new DEC(cpu, AddressingMode.INDEXED_ABSOLUTE_X);
+            case 0xE6:
+                return new INC(cpu, AddressingMode.ZERO_PAGE);
+            case 0xF6:
+                return new INC(cpu, AddressingMode.INDEXED_ZERO_PAGE_X);
+            case 0xEE:
+                return new INC(cpu, AddressingMode.ABSOLUTE);
+            case 0xFE:
+                return new INC(cpu, AddressingMode.INDEXED_ABSOLUTE_X);
+            case 0xE8:
+                return new INX(cpu, AddressingMode.IMPLIED);
+            case 0xC8:
+                return new INY(cpu, AddressingMode.IMPLIED);
+                
             default:
                 System.out.println("Unimplemented opcode " + Integer.toHexString(opcode));
                 return null;
