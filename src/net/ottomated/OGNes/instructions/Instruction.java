@@ -266,6 +266,16 @@ public abstract class Instruction {
                 return new INX(cpu, AddressingMode.IMPLIED);
             case 0xC8:
                 return new INY(cpu, AddressingMode.IMPLIED);
+            case 0xEA:
+                return new NOP(cpu, AddressingMode.IMPLIED);
+            case 0xCA:
+                return new DEX(cpu, AddressingMode.IMPLIED);
+            case 0x88:
+                return new DEY(cpu, AddressingMode.IMPLIED);
+            case 0xAA:
+                return new TAX(cpu, AddressingMode.IMPLIED);
+            case 0xA8:
+                return new TAY(cpu, AddressingMode.IMPLIED);
                 
             default:
                 System.out.println("Unimplemented opcode " + Integer.toHexString(opcode));
