@@ -282,6 +282,20 @@ public abstract class Instruction {
                 return new TAX(cpu, AddressingMode.IMPLIED);
             case 0xA8:
                 return new TAY(cpu, AddressingMode.IMPLIED);
+            case 0x85:
+                return new STA(cpu, AddressingMode.ZERO_PAGE);
+            case 0x95:
+                return new STA(cpu, AddressingMode.INDEXED_ZERO_PAGE_X);
+            case 0x8D:
+                return new STA(cpu, AddressingMode.ABSOLUTE);
+            case 0x9D:
+                return new STA(cpu, AddressingMode.INDEXED_ABSOLUTE_X);
+            case 0x99:
+                return new STA(cpu, AddressingMode.INDEXED_ABSOLUTE_Y);
+            case 0x81:
+                return new STA(cpu, AddressingMode.INDEXED_INDIRECT);
+            case 0x91:
+                return new STA(cpu, AddressingMode.INDIRECT_INDEXED);
 
             default:
                 System.out.println("Unimplemented opcode " + Integer.toHexString(opcode));
