@@ -2,9 +2,9 @@ package net.ottomated.OGNes.instructions;
 
 import net.ottomated.OGNes.Cpu;
 
-class INY extends Instruction {
+class DEY extends Instruction {
 
-    INY(Cpu cpu, AddressingMode mode) {
+    DEY(Cpu cpu, AddressingMode mode) {
         this.cpu = cpu;
         done = false;
         this.mode = mode;
@@ -14,7 +14,7 @@ class INY extends Instruction {
                 () -> {
                   cpu.setZero(res == 0);
                   cpu.setNegative(((res >> 7) & 1) == 1); // If the 7th bit is 1
-                  cpu.y++;
+                  cpu.y--;
                 }
         
         };

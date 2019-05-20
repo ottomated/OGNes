@@ -272,7 +272,17 @@ public abstract class Instruction {
                 return new SED(cpu, AddressingMode.IMPLIED);
             case 0x78:
                 return new SEI(cpu, AddressingMode.IMPLIED);
-                
+            case 0xEA:
+                return new NOP(cpu, AddressingMode.IMPLIED);
+            case 0xCA:
+                return new DEX(cpu, AddressingMode.IMPLIED);
+            case 0x88:
+                return new DEY(cpu, AddressingMode.IMPLIED);
+            case 0xAA:
+                return new TAX(cpu, AddressingMode.IMPLIED);
+            case 0xA8:
+                return new TAY(cpu, AddressingMode.IMPLIED);
+
             default:
                 System.out.println("Unimplemented opcode " + Integer.toHexString(opcode));
                 return null;
