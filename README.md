@@ -9,3 +9,4 @@ Resources:
 - [Documentation](http://nesdev.com/NESDoc.pdf)
 - [Reference](http://wiki.nesdev.com/w/index.php/NES_reference_guide)
 - [Instruction Timings](http://atarihq.com/danb/files/64doc.txt)
+- [Additional Info](https://taywee.github.io/NerdyNights/nerdynights.html)
