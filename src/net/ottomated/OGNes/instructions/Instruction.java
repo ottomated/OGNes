@@ -316,6 +316,12 @@ public abstract class Instruction {
                 return new PLA(cpu, AddressingMode.IMPLIED);
             case 0x28:
                 return new PLP(cpu, AddressingMode.IMPLIED);
+            case 0x20:
+                return new JSR(cpu, AddressingMode.ABSOLUTE);
+            case 0x4C:
+                return new JMP(cpu, AddressingMode.ABSOLUTE);
+            case 0x6C:
+                return new JMP(cpu, AddressingMode.INDIRECT);
 
             default:
                 System.out.println("Unimplemented opcode " + Integer.toHexString(opcode));
