@@ -304,6 +304,10 @@ public abstract class Instruction {
                 return new STA(cpu, AddressingMode.INDEXED_INDIRECT);
             case 0x91:
                 return new STA(cpu, AddressingMode.INDIRECT_INDEXED);
+            case 0x40:
+                return new RTI(cpu, AddressingMode.IMPLIED);
+            case 0x60:
+                return new RTS(cpu, AddressingMode.IMPLIED);
 
             default:
                 System.out.println("Unimplemented opcode " + Integer.toHexString(opcode));
