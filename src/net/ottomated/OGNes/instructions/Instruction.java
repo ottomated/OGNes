@@ -308,6 +308,10 @@ public abstract class Instruction {
                 return new RTI(cpu, AddressingMode.IMPLIED);
             case 0x60:
                 return new RTS(cpu, AddressingMode.IMPLIED);
+            case 0x48:
+                return new PHA(cpu, AddressingMode.IMPLIED);
+            case 0x08:
+                return new PHP(cpu, AddressingMode.IMPLIED);
 
             default:
                 System.out.println("Unimplemented opcode " + Integer.toHexString(opcode));
