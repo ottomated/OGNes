@@ -5,9 +5,9 @@ import net.ottomated.OGNes.Cpu;
 public class ASR extends ReadModWriteInstruction {
 
     private int doOp(int initial) {
-        int res = initial >> 1;
+        int res = initial << 1;
 
-        cpu.setCarry(initial & 1);
+        cpu.setCarry(res > 255);
         cpu.setZero(res == 0);
         cpu.setNegative(((res >> 7) & 1) == 1); // If the 7th bit is 1
         return res & 255;
@@ -22,7 +22,7 @@ public class ASR extends ReadModWriteInstruction {
         cpu.a = doOp(cpu.a);
     }
 
-    ASL(Cpu cpu, AddressingMode mode) {
+    ASR(Cpu cpu, AddressingMode mode) {
         super(mode);
         this.cpu = cpu;
         done = false;

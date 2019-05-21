@@ -10,13 +10,13 @@ class INY extends Instruction {
         this.mode = mode;
         length = 1;
 
-        steps = new Step[] {
+        steps = new Step[]{
                 () -> {
-                  cpu.setZero(res == 0);
-                  cpu.setNegative(((res >> 7) & 1) == 1); // If the 7th bit is 1
-                  cpu.y++;
+                    cpu.y++;
+                    cpu.setZero(cpu.y == 0);
+                    cpu.setNegative(((cpu.y >> 7) & 1) == 1); // If the 7th bit is 1
                 }
-        
+
         };
     }
 }

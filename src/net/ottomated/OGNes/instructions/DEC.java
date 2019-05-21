@@ -11,9 +11,15 @@ public class DEC extends ReadModWriteInstruction {
         cpu.setNegative(((res >> 7) & 1) == 1); // If the 7th bit is 1
         return res & 255;
     }
+
     @Override
     void finalStep() {
         cpu.set(loc, doOp(m));
+    }
+
+    @Override
+    void finalAccumulatorStep() {
+
     }
 
     DEC(Cpu cpu, AddressingMode mode) {

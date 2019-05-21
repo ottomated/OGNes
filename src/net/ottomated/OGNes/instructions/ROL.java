@@ -5,13 +5,14 @@ import net.ottomated.OGNes.Cpu;
 public class ROL extends ReadModWriteInstruction {
 
     private int doOp(int initial) {
-        int res = initial << 1 | cpu.getCarry();
+        int res = initial << 1 | (cpu.getCarry() ? 1 : 0);
 
-        cpu.setCarry(initial >> 7 & 1);
+        cpu.setCarry((initial >> 7 & 1) == 1);
         cpu.setZero(res == 0);
         cpu.setNegative(((res >> 7) & 1) == 1); // If the 7th bit is 1
         return res & 255;
     }
+
     @Override
     void finalStep() {
         cpu.set(loc, doOp(m));

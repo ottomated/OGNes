@@ -1,24 +1,15 @@
 package net.ottomated.OGNes;
 
+import java.io.*;
+
 public class Test {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Cpu cpu = new Cpu();
         cpu.reset();
-        Expect.A.toBe(cpu, 0);
-        cpu.loadProgram(new int[]{0x69, 0x50, 0x2D, 0x00, 0x80});
-        cpu.cycle();
-        Expect.A.toBe(cpu, 0);
-        cpu.cycle();
-        Expect.A.toBe(cpu, 0x50);
-        cpu.cycle();
-        Expect.A.toBe(cpu, 0x50);
-        cpu.cycle();
-        Expect.A.toBe(cpu, 0x50);
-        cpu.cycle();
-        Expect.A.toBe(cpu, 0x50);
-        cpu.cycle();
-        Expect.A.toBe(cpu, 0x50 & 0x69);
+        File program = new File("/home/otto/Downloads/19.05.21/instr_timing/instr_timing.nes");
+
+        cpu.loadINES(program);
 
         System.out.println("Success!");
     }

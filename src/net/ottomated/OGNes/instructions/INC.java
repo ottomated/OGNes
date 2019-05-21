@@ -6,14 +6,19 @@ public class INC extends ReadModWriteInstruction {
 
     private int doOp(int initial) {
         int res = initial + 1;
-        
+
         cpu.setZero(res == 0);
         cpu.setNegative(((res >> 7) & 1) == 1); // If the 7th bit is 1
         return res & 255;
     }
+
     @Override
     void finalStep() {
         cpu.set(loc, doOp(m));
+    }
+
+    @Override
+    void finalAccumulatorStep() {
     }
 
     INC(Cpu cpu, AddressingMode mode) {

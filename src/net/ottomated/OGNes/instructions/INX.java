@@ -12,9 +12,9 @@ class INX extends Instruction {
 
         steps = new Step[] {
                 () -> {
-                  cpu.setZero(res == 0);
-                  cpu.setNegative(((res >> 7) & 1) == 1); // If the 7th bit is 1
-                  cpu.x++;
+                    cpu.x++;
+                  cpu.setZero(cpu.x == 0);
+                  cpu.setNegative(((cpu.x >> 7) & 1) == 1); // If the 7th bit is 1
                 }
         
         };

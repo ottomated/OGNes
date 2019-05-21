@@ -2,6 +2,10 @@ package net.ottomated.OGNes;
 
 import net.ottomated.OGNes.instructions.Instruction;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
 public class Cpu {
 
     private int[] memory; // 0x10000 bytes
@@ -29,42 +33,55 @@ public class Cpu {
     public void setCarry(boolean b) {
         setStatusAt(b, 0);
     }
+
     public void setZero(boolean b) {
         setStatusAt(b, 1);
     }
+
     public void setInterruptDisable(boolean b) {
         setStatusAt(b, 2);
     }
+
     public void setDecimalMode(boolean b) {
         setStatusAt(b, 3);
     }
+
     public void setBreak(boolean b) {
         setStatusAt(b, 4);
     }
+
     public void setOverflow(boolean b) {
         setStatusAt(b, 6);
     }
+
     public void setNegative(boolean b) {
         setStatusAt(b, 7);
     }
+
     public boolean getCarry() {
         return getStatusAt(0);
     }
+
     public boolean getZero() {
         return getStatusAt(1);
     }
+
     public boolean getInterruptDisable() {
         return getStatusAt(2);
     }
+
     public boolean getDecimalMode() {
         return getStatusAt(3);
     }
+
     public boolean getBreak() {
         return getStatusAt(4);
     }
+
     public boolean getOverflow() {
         return getStatusAt(6);
     }
+
     public boolean getNegative() {
         return getStatusAt(7);
     }
@@ -73,6 +90,7 @@ public class Cpu {
         status = b ? status | (1 << i)
                 : status & ~(1 << i);
     }
+
     private boolean getStatusAt(int i) {
         return ((status >> i) & 1) == 1;
     }
@@ -99,8 +117,17 @@ public class Cpu {
         pc = 0x8000;
         sp = 0x01ff;
     }
+
     public void loadProgram(int[] data) {
         System.arraycopy(data, 0, memory, 0x8000, data.length);
+    }
+
+    public void loadINES(File f) throws IOException {
+
+        byte[] b = Files.readAllBytes(f.toPath());
+        for (int i = 16; i < b.length; i++) {
+            memory[i - 16 + 0x8000] = b[i] & 0xFF;
+        }
     }
 
     public void cycle() {
@@ -117,6 +144,7 @@ public class Cpu {
         if (sp < 0x0100) sp = 0x01ff;
         else if (sp > 0x01ff) sp = 0x0100;
     }
+
     public int popStack() {
         sp++;
         if (sp < 0x0100) sp = 0x01ff;

@@ -5,10 +5,10 @@ import net.ottomated.OGNes.Cpu;
 class CMP extends ReadInstruction {
 
     void finalStep() {
-        int res = cpu.a - cpu.m;
-        cpu.setCarry(cpu.a >= cpu.m);
+        int res = cpu.a - m;
+        cpu.setCarry(cpu.a >= m);
         cpu.setNegative(((res >> 7) & 1) == 1); // If the 7th bit is 1
-        cpu.setZero(cpu.a == cpu.m);
+        cpu.setZero(cpu.a == m);
     }
 
     CMP(Cpu cpu, AddressingMode mode) {
