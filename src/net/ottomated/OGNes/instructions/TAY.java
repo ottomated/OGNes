@@ -12,8 +12,8 @@ class TAY extends Instruction {
 
         steps = new Step[] {
                 () -> {
-                  cpu.setZero(res == 0);
-                  cpu.setNegative(((res >> 7) & 1) == 1); // If the 7th bit is 1
+                  cpu.setZero(cpu.a == 0);
+                  cpu.setNegative(((cpu.a >> 7) & 1) == 1); // If the 7th bit is 1
                   cpu.y = cpu.a;
                 }
         };

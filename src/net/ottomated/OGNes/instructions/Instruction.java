@@ -282,6 +282,14 @@ public abstract class Instruction {
                 return new TAX(cpu, AddressingMode.IMPLIED);
             case 0xA8:
                 return new TAY(cpu, AddressingMode.IMPLIED);
+            case 0xBA:
+                return new TSX(cpu, AddressingMode.IMPLIED);
+            case 0x9A:
+                return new TXS(cpu, AddressingMode.IMPLIED);
+            case 0x98:
+                return new TYA(cpu, AddressingMode.IMPLIED);
+            case 0x8A:
+                return new TXA(cpu, AddressingMode.IMPLIED);
             case 0x85:
                 return new STA(cpu, AddressingMode.ZERO_PAGE);
             case 0x95:
