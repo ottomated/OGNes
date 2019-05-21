@@ -312,6 +312,10 @@ public abstract class Instruction {
                 return new PHA(cpu, AddressingMode.IMPLIED);
             case 0x08:
                 return new PHP(cpu, AddressingMode.IMPLIED);
+            case 0x68:
+                return new PLA(cpu, AddressingMode.IMPLIED);
+            case 0x28:
+                return new PLP(cpu, AddressingMode.IMPLIED);
 
             default:
                 System.out.println("Unimplemented opcode " + Integer.toHexString(opcode));
