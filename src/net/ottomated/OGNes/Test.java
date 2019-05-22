@@ -1,17 +1,18 @@
 package net.ottomated.OGNes;
 
+import net.ottomated.OGNes.mappers.Mapper;
+
 import java.io.*;
 
 public class Test {
 
     public static void main(String[] args) throws IOException {
+        File program = new File("/home/otto/Downloads/19.05.21/instr_timing/instr_timing.nes");
+        Rom rom = new Rom(program);
+
         Cpu cpu = new Cpu();
         cpu.reset();
-        File program = new File("/home/otto/Downloads/19.05.21/instr_timing/instr_timing.nes");
-
-        cpu.loadINES(program);
-
-        System.out.println("Success!");
+        cpu.loadRom(rom);
     }
 
     private static class Expect {
