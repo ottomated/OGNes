@@ -1,10 +1,7 @@
 package net.ottomated.OGNes;
 
 import net.ottomated.OGNes.instructions.Instruction;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
+import net.ottomated.OGNes.mappers.Mapper;
 
 public class Cpu {
 
@@ -14,6 +11,7 @@ public class Cpu {
     public int sp; // Stack Pointer
 
     private Instruction instruction;
+    private Mapper mapper;
 
     public int a; // Accumulator
     public int x; // Index Register X
@@ -117,17 +115,8 @@ public class Cpu {
         pc = 0x8000;
         sp = 0x01ff;
     }
-
-    public void loadProgram(int[] data) {
-        System.arraycopy(data, 0, memory, 0x8000, data.length);
-    }
-
-    public void loadINES(File f) throws IOException {
-
-        byte[] b = Files.readAllBytes(f.toPath());
-        for (int i = 16; i < b.length; i++) {
-            memory[i - 16 + 0x8000] = b[i] & 0xFF;
-        }
+    public void loadRom(Rom rom) {
+        mapper = rom.mapper;
     }
 
     public void cycle() {
@@ -139,7 +128,7 @@ public class Cpu {
     }
 
     public void pushStack(int b) {
-        this.memory[sp] = b;
+        mapper.write(sp, b);
         sp--;
         if (sp < 0x0100) sp = 0x01ff;
         else if (sp > 0x01ff) sp = 0x0100;
@@ -149,27 +138,27 @@ public class Cpu {
         sp++;
         if (sp < 0x0100) sp = 0x01ff;
         else if (sp > 0x01ff) sp = 0x0100;
-        return this.memory[sp];
+        return mapper.read(sp);
     }
 
     public int pop() {
         pc++;
-        return this.memory[pc - 1];
+        return mapper.read(pc - 1);
     }
 
     public int peek(int loc) {
-        return this.memory[loc];
+        return mapper.read(loc);
     }
 
     public void set(int loc, int b) {
-        this.memory[loc] = b;
+        mapper.write(loc, b);
     }
 
     @Override
     public String toString() {
         return "===== CPU =====\n" +
                 "PC: $" + Integer.toHexString(pc) +
-                "  memory[pc]: $" + Integer.toHexString(memory[pc]) + "\n" +
+                "  memory[pc]: $" + Integer.toHexString(mapper.read(pc)) + "\n" +
                 "SP: $" + Integer.toHexString(sp) + "\n" +
                 "X:  $" + Integer.toHexString(x) + "\n" +
                 "Y:  $" + Integer.toHexString(y) + "\n" +
