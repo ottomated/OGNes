@@ -7,12 +7,8 @@ import java.io.*;
 public class Test {
 
     public static void main(String[] args) throws IOException {
-        File program = new File("/home/otto/Downloads/19.05.21/instr_timing/instr_timing.nes");
-        Rom rom = new Rom(program);
-
-        Cpu cpu = new Cpu();
-        cpu.reset();
-        cpu.loadRom(rom);
+        Nes nes = new Nes("/home/otto/Downloads/19.05.21/instr_timing/instr_timing.nes");
+        nes.start();
     }
 
     private static class Expect {
