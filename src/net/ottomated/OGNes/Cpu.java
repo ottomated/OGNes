@@ -5,7 +5,7 @@ import net.ottomated.OGNes.mappers.Mapper;
 
 public class Cpu {
 
-    private int[] memory; // 0x10000 bytes
+    public int[] memory; // 0x10000 bytes
 
     public int pc; // Program Counter
     public int sp; // Stack Pointer
@@ -108,6 +108,13 @@ public class Cpu {
             this.memory[i] = 0xFF;
         }
 
+        for (int p = 0; p < 4; p++) {
+            int j = p * 0x800;
+            memory[j + 0x008] = 0xf7;
+            memory[j + 0x009] = 0xef;
+            memory[j + 0x00a] = 0xdf;
+            memory[j + 0x00f] = 0xbf;
+        }
         // Clear memory
         for (i = 0x2001; i < memory.length; i++) {
             this.memory[i] = 0;
