@@ -1,5 +1,7 @@
 package net.ottomated.OGNes.mappers;
 
+import net.ottomated.OGNes.Nes;
+
 public abstract class Mapper {
     public static String name(int id) {
         switch (id) {
@@ -84,6 +86,8 @@ public abstract class Mapper {
     public static Mapper fromID(int id) {
         return null;
     }
+
+    Nes nes;
 
     public abstract int read(int addr);
 
