@@ -20,57 +20,162 @@ public class Ppu {
     // 5 => Empty
     // 6 => Overflow (if previous instruction resulted in an invalid two's complement)
     // 7 => Negative
-    public int status;
+    public int ctrl;
+    public int mask;
+    public int stat;
+    public int oamAddr;
+    public int oamData;
+    public int scrl;
+    public int oamData;
 
-    public void setVBlank(boolean b) {
-        setStatusAt(b, 0);
+    public void setNMI(boolean b) {
+        ctrl = setStatusAt(b, 0, ctrl);
     }
     public void setMasterSlave(boolean b) {
-        setStatusAt(b, 1);
+        ctrl = setStatusAt(b, 1, ctrl);
     }
     public void setSpriteSize(boolean b) {
-        setStatusAt(b, 2);
+        ctrl = setStatusAt(b, 2, ctrl);
     }
     public void setBackgroundPattern(boolean b) {
-        setStatusAt(b, 3);
+        ctrl = setStatusAt(b, 3, ctrl);
     }
     public void setSpritePattern(boolean b) {
-        setStatusAt(b, 4);
+        ctrl = setStatusAt(b, 4, ctrl);
     }
     public void setVRAMIncrement(boolean b) {
-        setStatusAt(b, 6);
+        ctrl = setStatusAt(b, 5, ctrl);
     }
-    public void setNametable(boolean b) {
-        setStatusAt(b, 7);
+    public void setNametableBig(boolean b) {
+        ctrl = setStatusAt(b, 6, ctrl);
     }
-    public boolean getVBlank() {
-        return getStatusAt(0);
+    public void setNametableSmall(boolean b) {
+        ctrl = setStatusAt(b, 7, ctrl);
+    }
+    public boolean getNMI() {
+        return getStatusAt(0, ctrl);
     }
     public boolean getMasterSlave() {
-        return getStatusAt(1);
+        return getStatusAt(1, ctrl);
     }
     public boolean getSpriteSize() {
-        return getStatusAt(2);
+        return getStatusAt(2, ctrl);
     }
     public boolean getBackgroundPattern() {
-        return getStatusAt(3);
+        return getStatusAt(3, ctrl);
     }
     public boolean getSpritePattern() {
-        return getStatusAt(4);
+        return getStatusAt(4, ctrl);
     }
     public boolean getVRAMIncrement() {
-        return getStatusAt(6);
+        return getStatusAt(5, ctrl);
     }
-    public boolean getNametable() {
-        return getStatusAt(7);
+    public boolean getNametableBig() {
+        return getStatusAt(6, ctrl);
+    }
+    public void getNametableSmall(boolean b) {
+        return getStatusAt(7, ctrl);
+    }
+    
+    
+    
+    public void setClrEmphB(boolean b) {
+        mask = setStatusAt(b, 0, mask);
+    }
+    public void setClrEmphG(boolean b) {
+        mask = setStatusAt(b, 1, mask);
+    }
+    public void setClrEmphR(boolean b) {
+        mask = setStatusAt(b, 2, mask);
+    }
+    public void setSpriteEnable(boolean b) {
+        mask = setStatusAt(b, 3, mask);
+    }
+    public void setBackgroundEnable(boolean b) {
+        mask = setStatusAt(b, 4, mask);
+    }
+    public void setSpriteLeftEnable(boolean b) {
+        mask = setStatusAt(b, 5, mask);
+    }
+    public void setBackgroundLeftEnable(boolean b) {
+        mask = setStatusAt(b, 6, mask);
+    }
+    public void setGray(boolean b) {
+        mask = setStatusAt(b, 7, mask);
+    }
+    public boolean getClrEmphB() {
+        return getStatusAt(0, mask);
+    }
+    public boolean getClrEmphG() {
+        return getStatusAt(1, mask);
+    }
+    public boolean getClrEmphR() {
+        return getStatusAt(2, mask);
+    }
+    public boolean getSpriteEnable() {
+        return getStatusAt(3, mask);
+    }
+    public boolean getBackgroundEnable() {
+        return getStatusAt(4, mask);
+    }
+    public boolean getSpriteLeftEnable() {
+        return getStatusAt(5, mask);
+    }
+    public boolean getBackgroundLeftEnable() {
+        return getStatusAt(6, mask);
+    }
+    public void getGray(boolean b) {
+        return getStatusAt(7, mask);
+    }
+    
+    
+    public void setVBlank(boolean b) {
+        stat = setStatusAt(b, 0, stat);
+    }
+    public void setSpriteHit(boolean b) {
+        stat = setStatusAt(b, 1, stat);
+    }
+    public void setSpriteOverflow(boolean b) {
+        stat = setStatusAt(b, 2, stat);
+    }
+    public boolean getVBlank() {
+        return getStatusAt(0, stat);
+    }
+    public boolean getSpriteHit() {
+        return getStatusAt(1, stat);
+    }
+    public boolean getSpriteOverflow() {
+        return getStatusAt(2, stat);
+    }
+    
+    
+    public void setOamAddr(int i) {
+        oamAddr = i;
+    }
+    public void getOamAddr(int i) {
+        return oamAddr;
+    }
+    
+    public void setOamData(int i) {
+        oamData = i;
+    }
+    public void getOamData(int i) {
+        return oamData;
+    }
+    
+    public void setScrl(int i) {
+        scrl = i;
+    }
+    public void getScrl(int i) {
+        return scrl;
     }
 
-    private void setStatusAt(boolean b, int i) {
-        status = b ? status | (1 << i)
-                : status & ~(1 << i);
+    private int setStatusAt(boolean b, int i, int register) {
+        return b ? register | (1 << i)
+                : register & ~(1 << i);
     }
-    private boolean getStatusAt(int i) {
-        return ((status >> i) & 1) == 1;
+    private boolean getStatusAt(int i, int register) {
+        return ((register >> i) & 1) == 1;
     }
 
     private enum Interrupt {IRQ, NMI, RESET}
