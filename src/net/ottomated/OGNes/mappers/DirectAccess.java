@@ -27,7 +27,7 @@ public class DirectAccess extends Mapper {
                     case 1:
                         return nes.cpu.memory[0x2001];
                     case 2:
-                        return nes.ppu.status();
+                        return nes.ppu.status;
                     case 3:
                     case 5:
                     case 6:
