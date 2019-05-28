@@ -97,7 +97,7 @@ public class Cpu {
 
     private Interrupt interrupt;
 
-    public void reset() {
+    void reset() {
         memory = new int[0x10000];
         status = 0b00101000;
 
@@ -121,17 +121,70 @@ public class Cpu {
         }
         pc = 0x8000;
         sp = 0x01ff;
+
+        interrupt = null;
     }
-    public void loadRom(Rom rom) {
+
+    void loadRom(Rom rom) {
         mapper = rom.mapper;
     }
 
     public void cycle() {
+        if (interrupt != null) {
+            switch (interrupt) {
+                case IRQ:
+                    if (getInterruptDisable())
+                        break;
+                    doIrq(status);
+                    break;
+                case NMI:
+                    doNmi(status);
+                    break;
+                case RESET:
+                    doResetInt();
+                    break;
+            }
+        }
         if (instruction == null || instruction.done) {
             instruction = Instruction.parse(this);
         } else {
             instruction.cycle();
         }
+    }
+
+    public void requestIrq(Interrupt type) {
+        if (interrupt != null) {
+            if (type == Interrupt.IRQ)
+                return;
+        }
+        interrupt = type;
+    }
+
+    private void doIrq(int status) {
+        pc++;
+        pushStack((pc >> 8) & 0xff);
+        pushStack(pc & 0xff);
+        pushStack(status);
+        setInterruptDisable(true);
+        setBreak(false);
+        pc = peek(0xfffe) | (peek(0xffff) << 8);
+        pc--;
+    }
+
+    private void doNmi(int status) {
+        if ((peek(0x2000) & 128) != 0) {
+            pc++;
+            pushStack((pc >> 8) & 0xff);
+            pushStack(pc & 0xff);
+            pushStack(status);
+            pc = peek(0xfffa) | (peek(0xfffb) << 8);
+            pc--;
+        }
+    }
+
+    private void doResetInt() {
+        pc = peek(0xfffc) | (peek(0xfffd) << 8);
+        pc--;
     }
 
     public void pushStack(int b) {
@@ -171,6 +224,6 @@ public class Cpu {
                 "Y:  $" + Integer.toHexString(y) + "\n" +
                 "A:  $" + Integer.toHexString(a) + "\n" +
                 "STATUS: 0b" + Integer.toBinaryString(status) + "\n" +
-                "Current intruction: " + instruction;
+                "Current instruction: " + instruction;
     }
 }
