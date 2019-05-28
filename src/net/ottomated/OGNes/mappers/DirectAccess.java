@@ -27,7 +27,7 @@ public class DirectAccess extends Mapper {
                     case 1:
                         return nes.cpu.memory[0x2001];
                     case 2:
-                        return nes.ppu.status;
+                        return nes.ppu.ctrl;
                     case 3:
                     case 5:
                     case 6:
@@ -62,29 +62,29 @@ public class DirectAccess extends Mapper {
         switch (addr) {
             case 0x2000:
                 nes.cpu.memory[addr] = val;
-                nes.ppu.setCtrl1(val);
+                nes.ppu.ctrl = val;
                 break;
             case 0x2001:
                 this.nes.cpu.memory[addr] = val;
-                nes.ppu.setCtrl2(val);
+                nes.ppu.mask = val;
                 break;
             case 0x2003:
-                nes.ppu.writeSRAMAddress(val);
+                nes.ppu.oamAddr = val;
                 break;
             case 0x2004:
-                nes.ppu.sramWrite(val);
+                nes.ppu.oamWrite(val);
                 break;
             case 0x2005:
-                nes.ppu.scrollWrite(val);
+                nes.ppu.scrl = val;
                 break;
             case 0x2006:
-                nes.ppu.writeVRAMAddress(val);
+                nes.ppu.addr = val;
                 break;
             case 0x2007:
                 nes.ppu.vramWrite(val);
                 break;
             case 0x4014:
-                nes.ppu.sramDNA(val);
+                nes.ppu.sramDMA = val;
                 break;
             case 0x4015:
                 // TODO: APU Sound channel switch
