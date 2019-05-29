@@ -24,151 +24,156 @@ public class Ppu {
     public int mask;
     public int stat;
     public int oamAddr;
-    public int oamData;
     public int scrl;
-    public int oamData;
+    public int addr;
+
+    public int oamRead() {
+      return memory[0x0200 + oamAddr];
+    }
+    
+    public void oamWrite(int val) {
+      memory[oamAddr] = val;
+      oamAddr++;
+    }
+    
+    public int vramRead() {
+      return memory[addr];
+    }
+    
+    public void vramWrite(int val) {
+      memory[addr] = val;
+      addr += getVRAMIncrement();
+    }
+    
+    public void oamDMAWrite(int highByte){
+      for(int i = 0; i < 256; i++){
+         this.memory[0x0200 + i] = cpu.memory[highByte * 256 + i];
+         cnt++;
+      }
+    
+    }
 
     public void setNMI(boolean b) {
-        ctrl = setStatusAt(b, 0, ctrl);
-    }
-    public void setMasterSlave(boolean b) {
-        ctrl = setStatusAt(b, 1, ctrl);
-    }
-    public void setSpriteSize(boolean b) {
-        ctrl = setStatusAt(b, 2, ctrl);
-    }
-    public void setBackgroundPattern(boolean b) {
-        ctrl = setStatusAt(b, 3, ctrl);
-    }
-    public void setSpritePattern(boolean b) {
-        ctrl = setStatusAt(b, 4, ctrl);
-    }
-    public void setVRAMIncrement(boolean b) {
-        ctrl = setStatusAt(b, 5, ctrl);
-    }
-    public void setNametableBig(boolean b) {
-        ctrl = setStatusAt(b, 6, ctrl);
-    }
-    public void setNametableSmall(boolean b) {
         ctrl = setStatusAt(b, 7, ctrl);
     }
+    public void setMasterSlave(boolean b) {
+        ctrl = setStatusAt(b, 6, ctrl);
+    }
+    public void setSpriteSize(boolean b) {
+        ctrl = setStatusAt(b, 5, ctrl);
+    }
+    public void setBackgroundPattern(boolean b) {
+        ctrl = setStatusAt(b, 4, ctrl);
+    }
+    public void setSpritePattern(boolean b) {
+        ctrl = setStatusAt(b, 3, ctrl);
+    }
+    public void setVRAMIncrement(boolean b) {
+        ctrl = setStatusAt(b, 2, ctrl);
+    }
+    public void setNametableBig(boolean b) {
+        ctrl = setStatusAt(b, 1, ctrl);
+    }
+    public void setNametableSmall(boolean b) {
+        ctrl = setStatusAt(b, 0, ctrl);
+    }
     public boolean getNMI() {
-        return getStatusAt(0, ctrl);
+        return getStatusAt(7, ctrl);
     }
     public boolean getMasterSlave() {
-        return getStatusAt(1, ctrl);
-    }
-    public boolean getSpriteSize() {
-        return getStatusAt(2, ctrl);
-    }
-    public boolean getBackgroundPattern() {
-        return getStatusAt(3, ctrl);
-    }
-    public boolean getSpritePattern() {
-        return getStatusAt(4, ctrl);
-    }
-    public boolean getVRAMIncrement() {
-        return getStatusAt(5, ctrl);
-    }
-    public boolean getNametableBig() {
         return getStatusAt(6, ctrl);
     }
-    public void getNametableSmall(boolean b) {
-        return getStatusAt(7, ctrl);
+    public boolean getSpriteSize() {
+        return getStatusAt(5, ctrl);
+    }
+    public boolean getBackgroundPattern() {
+        return getStatusAt(4, ctrl);
+    }
+    public boolean getSpritePattern() {
+        return getStatusAt(3, ctrl);
+    }
+    public boolean getVRAMIncrement() {
+        return getStatusAt(2, ctrl);
+    }
+    public boolean getNametableBig() {
+        return getStatusAt(1, ctrl);
+    }
+    public void getNametableSmall() {
+        return getStatusAt(0, ctrl);
     }
     
     
     
     public void setClrEmphB(boolean b) {
-        mask = setStatusAt(b, 0, mask);
-    }
-    public void setClrEmphG(boolean b) {
-        mask = setStatusAt(b, 1, mask);
-    }
-    public void setClrEmphR(boolean b) {
-        mask = setStatusAt(b, 2, mask);
-    }
-    public void setSpriteEnable(boolean b) {
-        mask = setStatusAt(b, 3, mask);
-    }
-    public void setBackgroundEnable(boolean b) {
-        mask = setStatusAt(b, 4, mask);
-    }
-    public void setSpriteLeftEnable(boolean b) {
-        mask = setStatusAt(b, 5, mask);
-    }
-    public void setBackgroundLeftEnable(boolean b) {
-        mask = setStatusAt(b, 6, mask);
-    }
-    public void setGray(boolean b) {
         mask = setStatusAt(b, 7, mask);
     }
+    public void setClrEmphG(boolean b) {
+        mask = setStatusAt(b, 6, mask);
+    }
+    public void setClrEmphR(boolean b) {
+        mask = setStatusAt(b, 5, mask);
+    }
+    public void setSpriteEnable(boolean b) {
+        mask = setStatusAt(b, 4, mask);
+    }
+    public void setBackgroundEnable(boolean b) {
+        mask = setStatusAt(b, 3, mask);
+    }
+    public void setSpriteLeftEnable(boolean b) {
+        mask = setStatusAt(b, 2, mask);
+    }
+    public void setBackgroundLeftEnable(boolean b) {
+        mask = setStatusAt(b, 1, mask);
+    }
+    public void setGray(boolean b) {
+        mask = setStatusAt(b, 0, mask);
+    }
     public boolean getClrEmphB() {
-        return getStatusAt(0, mask);
+        return getStatusAt(7, mask);
     }
     public boolean getClrEmphG() {
-        return getStatusAt(1, mask);
-    }
-    public boolean getClrEmphR() {
-        return getStatusAt(2, mask);
-    }
-    public boolean getSpriteEnable() {
-        return getStatusAt(3, mask);
-    }
-    public boolean getBackgroundEnable() {
-        return getStatusAt(4, mask);
-    }
-    public boolean getSpriteLeftEnable() {
-        return getStatusAt(5, mask);
-    }
-    public boolean getBackgroundLeftEnable() {
         return getStatusAt(6, mask);
     }
+    public boolean getClrEmphR() {
+        return getStatusAt(5, mask);
+    }
+    public boolean getSpriteEnable() {
+        return getStatusAt(4, mask);
+    }
+    public boolean getBackgroundEnable() {
+        return getStatusAt(3, mask);
+    }
+    public boolean getSpriteLeftEnable() {
+        return getStatusAt(2, mask);
+    }
+    public boolean getBackgroundLeftEnable() {
+        return getStatusAt(1, mask);
+    }
     public void getGray(boolean b) {
-        return getStatusAt(7, mask);
+        return getStatusAt(0, mask);
     }
     
     
     public void setVBlank(boolean b) {
-        stat = setStatusAt(b, 0, stat);
+        stat = setStatusAt(b, 7, stat);
     }
     public void setSpriteHit(boolean b) {
-        stat = setStatusAt(b, 1, stat);
+        stat = setStatusAt(b, 6, stat);
     }
     public void setSpriteOverflow(boolean b) {
-        stat = setStatusAt(b, 2, stat);
+        stat = setStatusAt(b, 5, stat);
     }
     public boolean getVBlank() {
-        return getStatusAt(0, stat);
+        return getStatusAt(7, stat);
     }
     public boolean getSpriteHit() {
-        return getStatusAt(1, stat);
+        return getStatusAt(6, stat);
     }
     public boolean getSpriteOverflow() {
-        return getStatusAt(2, stat);
+        return getStatusAt(5, stat);
     }
+
     
-    
-    public void setOamAddr(int i) {
-        oamAddr = i;
-    }
-    public void getOamAddr(int i) {
-        return oamAddr;
-    }
-    
-    public void setOamData(int i) {
-        oamData = i;
-    }
-    public void getOamData(int i) {
-        return oamData;
-    }
-    
-    public void setScrl(int i) {
-        scrl = i;
-    }
-    public void getScrl(int i) {
-        return scrl;
-    }
 
     private int setStatusAt(boolean b, int i, int register) {
         return b ? register | (1 << i)
@@ -210,24 +215,6 @@ public class Ppu {
         } else {
             instruction.cycle();
         }
-    }
-
-    public void pushStack(int b) {
-        this.memory[sp] = b;
-        sp--;
-        if (sp < 0x0100) sp = 0x01ff;
-        else if (sp > 0x01ff) sp = 0x0100;
-    }
-    public int popStack() {
-        sp++;
-        if (sp < 0x0100) sp = 0x01ff;
-        else if (sp > 0x01ff) sp = 0x0100;
-        return this.memory[sp];
-    }
-
-    public int pop() {
-        pc++;
-        return this.memory[pc - 1];
     }
 
     public int peek(int loc) {
