@@ -4,22 +4,9 @@ import net.ottomated.OGNes.instructions.Instruction;
 
 public class Ppu {
 
-    private int[] memory; // 0x10000 bytes
+    private int[] vRAM; // 0x10000 bytes
+    private int[] oam; // 0x100 bytes
 
-    public int pc; // Program Counter
-    public int sp; // Stack Pointer
-
-
-
-    // Processor Status
-    // 0 => Carry (if last instruction resulted in under/overflow)
-    // 1 => Zero (if last instruction's result was 0)
-    // 2 => Interrupt Disable (Enable to prevent system from responding to interrupts)
-    // 3 => Decimal mode (unsupported on this chip variant)
-    // 4 => Empty
-    // 5 => Empty
-    // 6 => Overflow (if previous instruction resulted in an invalid two's complement)
-    // 7 => Negative
     public int ctrl;
     public int mask;
     public int stat;
@@ -28,27 +15,26 @@ public class Ppu {
     public int addr;
 
     public int oamRead() {
-      return memory[0x0200 + oamAddr];
+      return oam[oamAddr];
     }
     
     public void oamWrite(int val) {
-      memory[oamAddr] = val;
+      oam[oamAddr] = val;
       oamAddr++;
     }
     
     public int vramRead() {
-      return memory[addr];
+      return vRAM[addr];
     }
     
     public void vramWrite(int val) {
-      memory[addr] = val;
+      vRAM[addr] = val;
       addr += getVRAMIncrement();
     }
     
     public void oamDMAWrite(int highByte){
       for(int i = 0; i < 256; i++){
-         this.memory[0x0200 + i] = cpu.memory[highByte * 256 + i];
-         cnt++;
+         this.oam[i] = cpu.memory[highByte * 256 + i];
       }
     
     }
@@ -188,25 +174,29 @@ public class Ppu {
     private Interrupt interrupt;
 
     public void reset() {
-        memory = new int[0x10000];
-        status = 0b00101000;
+        vRAM = new int[0x10000];
+        oam = new int[0x100];
+        
+        ctrl = 0;
+        mask = 0;
+        scrl = 0;
 
         int i;
 
         // RAM
         for (i = 0; i <= 0x2000; i++) {
-            this.memory[i] = 0xFF;
+            this.vRAM[i] = 0xFF;
         }
 
-        // Clear memory
-        for (i = 0x2001; i < memory.length; i++) {
-            this.memory[i] = 0;
+        // Clear vRAM
+        for (i = 0x2001; i < vRAM.length; i++) {
+            this.vRAM[i] = 0;
         }
         pc = 0x8000;
         sp = 0x01ff;
     }
     public void loadProgram(int[] data) {
-        System.arraycopy(data, 0, memory, 0x8000, data.length);
+        System.arraycopy(data, 0, vRAM, 0x8000, data.length);
     }
 
     public void cycle() {
@@ -218,18 +208,18 @@ public class Ppu {
     }
 
     public int peek(int loc) {
-        return this.memory[loc];
+        return this.vRAM[loc];
     }
 
     public void set(int loc, int b) {
-        this.memory[loc] = b;
+        this.vRAM[loc] = b;
     }
 
     @Override
     public String toString() {
         return "===== CPU =====\n" +
                 "PC: $" + Integer.toHexString(pc) +
-                "  memory[pc]: $" + Integer.toHexString(memory[pc]) + "\n" +
+                "  vRAM[pc]: $" + Integer.toHexString(vRAM[pc]) + "\n" +
                 "SP: $" + Integer.toHexString(sp) + "\n" +
                 "X:  $" + Integer.toHexString(x) + "\n" +
                 "Y:  $" + Integer.toHexString(y) + "\n" +
