@@ -4,6 +4,12 @@ import net.ottomated.OGNes.instructions.Instruction;
 
 public class Ppu {
 
+    Nes nes;
+
+    Ppu(Nes n) {
+        nes = n;
+    }
+
     private int[] vRAM; // 0x10000 bytes
     private int[] oam; // 0x100 bytes
 
@@ -29,12 +35,12 @@ public class Ppu {
     
     public void vramWrite(int val) {
       vRAM[addr] = val;
-      addr += getVRAMIncrement();
+      addr += getVRAMIncrement() ? 32 : 1;
     }
     
     public void oamDMAWrite(int highByte){
       for(int i = 0; i < 256; i++){
-         this.oam[i] = cpu.memory[highByte * 256 + i];
+         this.oam[i] = nes.cpu.memory[highByte * 256 + i];
       }
     
     }
@@ -84,7 +90,7 @@ public class Ppu {
     public boolean getNametableBig() {
         return getStatusAt(1, ctrl);
     }
-    public void getNametableSmall() {
+    public boolean getNametableSmall() {
         return getStatusAt(0, ctrl);
     }
     
@@ -135,7 +141,7 @@ public class Ppu {
     public boolean getBackgroundLeftEnable() {
         return getStatusAt(1, mask);
     }
-    public void getGray(boolean b) {
+    public boolean getGray(boolean b) {
         return getStatusAt(0, mask);
     }
     
