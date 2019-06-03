@@ -169,10 +169,6 @@ public class Ppu {
         return ((register >> i) & 1) == 1;
     }
 
-    private enum Interrupt {IRQ, NMI, RESET}
-
-    private Interrupt interrupt;
-
     public void reset() {
         vRAM = new int[0x10000];
         oam = new int[0x100];
@@ -192,19 +188,7 @@ public class Ppu {
         for (i = 0x2001; i < vRAM.length; i++) {
             this.vRAM[i] = 0;
         }
-        pc = 0x8000;
-        sp = 0x01ff;
-    }
-    public void loadProgram(int[] data) {
-        System.arraycopy(data, 0, vRAM, 0x8000, data.length);
-    }
 
-    public void cycle() {
-        if (instruction == null || instruction.done) {
-            instruction = Instruction.parse(this);
-        } else {
-            instruction.cycle();
-        }
     }
 
     public int peek(int loc) {
@@ -215,16 +199,4 @@ public class Ppu {
         this.vRAM[loc] = b;
     }
 
-    @Override
-    public String toString() {
-        return "===== CPU =====\n" +
-                "PC: $" + Integer.toHexString(pc) +
-                "  vRAM[pc]: $" + Integer.toHexString(vRAM[pc]) + "\n" +
-                "SP: $" + Integer.toHexString(sp) + "\n" +
-                "X:  $" + Integer.toHexString(x) + "\n" +
-                "Y:  $" + Integer.toHexString(y) + "\n" +
-                "A:  $" + Integer.toHexString(a) + "\n" +
-                "STATUS: 0b" + Integer.toBinaryString(status) + "\n" +
-                "Current intruction: " + instruction;
-    }
 }
