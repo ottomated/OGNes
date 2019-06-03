@@ -20,7 +20,7 @@ public class Nes {
         cpu.reset();
         cpu.loadRom(rom);
 
-        ppu = new Ppu();
+        ppu = new Ppu(this);
     }
 
     public void start() {
