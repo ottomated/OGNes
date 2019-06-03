@@ -33,9 +33,9 @@ public class DirectAccess extends Mapper {
                     case 6:
                         return 0;
                     case 4:
-                        return nes.ppu.sramLoad();
+                        return nes.ppu.oamRead();
                     case 7:
-                        return nes.ppu.vramLoad();
+                        return nes.ppu.vramRead();
                 }
                 break;
             case 4:
@@ -52,13 +52,12 @@ public class DirectAccess extends Mapper {
                         // 0x4017:
                         // TODO: Joystick 2 + Strobe
                         return 0;
-                    break;
                 }
         }
         return 0;
     }
 
-    private int regWrite(int addr, int val) {
+    private void regWrite(int addr, int val) {
         switch (addr) {
             case 0x2000:
                 nes.cpu.memory[addr] = val;
@@ -84,7 +83,7 @@ public class DirectAccess extends Mapper {
                 nes.ppu.vramWrite(val);
                 break;
             case 0x4014:
-                nes.ppu.sramDMA = val;
+                nes.ppu.oamDMAWrite(val);
                 break;
             case 0x4015:
                 // TODO: APU Sound channel switch
