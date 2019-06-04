@@ -5,6 +5,7 @@ import net.ottomated.OGNes.mappers.Mapper;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
 
 public class Rom {
     int romCount;
@@ -86,13 +87,10 @@ public class Rom {
                 if (leftOver < 8) {
                     vromTile[v][tileIndex].setScanline(leftOver, vrom[v][i], vrom[v][i + 8]);
                 } else {
-                    vromTile[v][tileIndex].setScanline(leftOver - 8, vrom[v][i - 8], vrom[v][i + 8]);
+                    vromTile[v][tileIndex].setScanline(leftOver - 8, vrom[v][i - 8], vrom[v][i]);
                 }
             }
         }
-
-
-        System.out.println(Mapper.name(mapperId));
     }
 
     Mirroring getMirroring() {

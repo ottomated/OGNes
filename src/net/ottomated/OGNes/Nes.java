@@ -10,6 +10,7 @@ public class Nes {
     public Ppu ppu;
     public Mapper mapper;
     public Rom rom;
+    public Graphics graphics;
 
     Nes(String romPath) throws IOException {
         File program = new File(romPath);
@@ -21,9 +22,11 @@ public class Nes {
         cpu.loadRom(rom);
 
         ppu = new Ppu(this);
+
+        graphics = new Graphics();
     }
 
-    public void start() {
+    private void frame() {
 
     }
 }

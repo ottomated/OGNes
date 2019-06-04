@@ -1,5 +1,7 @@
 package net.ottomated.OGNes;
 
+import java.util.Arrays;
+
 public class Tile {
     int[] pixels;
     boolean[] opaque;
@@ -22,5 +24,17 @@ public class Tile {
                 opaque[sline] = false;
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("\n");
+        for (int x = 0; x < 8; x++) {
+            for (int y = 0; y < 8; y++) {
+                sb.append(pixels[x * 8 + y]);
+            }
+            sb.append('\n');
+        }
+        return sb.toString();
     }
 }
