@@ -4,18 +4,17 @@ import net.ottomated.OGNes.Cpu;
 
 class TXS extends Instruction {
 
-    TXS(Cpu cpu, AddressingMode mode) {
-        this.cpu = cpu;
-        done = false;
-        this.mode = mode;
-        length = 1;
+    public int run(int addr, int cycleAdd) {
+        cpu.sp = cpu.x + 0x0100;
+        cpu.sp = 0x0100 | (cpu.sp & 0xff);
+        return 0;
+    }
 
-        steps = new Step[]{
-                () -> {
-                    cpu.setZero(cpu.x == 0);
-                    cpu.setNegative(((cpu.x >> 7) & 1) == 1); // If the 7th bit is 1
-                    cpu.sp = cpu.x;
-                }
-        };
+    TXS(Cpu cpu, AddressingMode mode, int size, int cycles) {
+        this.cpu = cpu;
+        this.mode = mode;
+        this.size = size;
+        this.cycles = cycles;
     }
 }
+

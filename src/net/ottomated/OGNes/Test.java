@@ -7,8 +7,7 @@ import java.io.*;
 public class Test {
 
     public static void main(String[] args) throws IOException {
-        Nes nes = new Nes("/home/otto/Downloads/19.05.21/instr_timing/instr_timing.nes");
-        nes.start();
+        Nes nes = new Nes("/home/otto/Downloads/19.06.03/Super Mario Bros (E).nes");
     }
 
     private static class Expect {

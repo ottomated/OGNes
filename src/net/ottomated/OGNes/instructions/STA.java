@@ -2,16 +2,18 @@ package net.ottomated.OGNes.instructions;
 
 import net.ottomated.OGNes.Cpu;
 
-class STA extends WriteInstruction {
-    @Override
-    void finalStep() {
-        cpu.set(loc, cpu.a);
+class STA extends Instruction {
+
+    public int run(int addr, int cycleAdd) {
+        cpu.write(addr, cpu.a);
+        return 0;
     }
 
-    STA(Cpu cpu, AddressingMode mode) {
-        super(mode);
+    STA(Cpu cpu, AddressingMode mode, int size, int cycles) {
         this.cpu = cpu;
-        done = false;
         this.mode = mode;
+        this.size = size;
+        this.cycles = cycles;
     }
 }
+

@@ -2,20 +2,22 @@ package net.ottomated.OGNes.instructions;
 
 import net.ottomated.OGNes.Cpu;
 
-class CPX extends ReadInstruction {
+class CPX extends Instruction {
 
-    void finalStep() {
-        int res = cpu.x - m;
-        cpu.setCarry(cpu.x >= m);
+    @Override
+    public int run(int addr, int cycleAdd) {
+        int res = cpu.x - cpu.load(addr);
+        cpu.setCarry(res >= 0);
         cpu.setNegative(((res >> 7) & 1) == 1); // If the 7th bit is 1
-        cpu.setZero(cpu.x == m);
+        cpu.setZero(res == 0);
+        return 0;
     }
 
-    CPX(Cpu cpu, AddressingMode mode) {
-        super(mode);
+    CPX(Cpu cpu, AddressingMode mode, int size, int cycles) {
         this.cpu = cpu;
-        done = false;
         this.mode = mode;
+        this.size = size;
+        this.cycles = cycles;
     }
 
 }

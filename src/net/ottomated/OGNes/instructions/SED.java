@@ -4,15 +4,16 @@ import net.ottomated.OGNes.Cpu;
 
 class SED extends Instruction {
 
-    SED(Cpu cpu, AddressingMode mode) {
-        this.cpu = cpu;
-        done = false;
-        this.mode = mode;
-        length = 1;
+    public int run(int addr, int cycleAdd) {
+        cpu.setDecimalMode(true);
+        return 0;
+    }
 
-        steps = new Step[] {
-                () -> cpu.setDecimalMode(true)
-        };
+    SED(Cpu cpu, AddressingMode mode, int size, int cycles) {
+        this.cpu = cpu;
+        this.mode = mode;
+        this.size = size;
+        this.cycles = cycles;
     }
 }
 

@@ -4,15 +4,16 @@ import net.ottomated.OGNes.Cpu;
 
 class CLC extends Instruction {
 
-    CLC(Cpu cpu, AddressingMode mode) {
-        this.cpu = cpu;
-        done = false;
-        this.mode = mode;
-        length = 1;
+    public int run(int addr, int cycleAdd) {
+        cpu.setCarry(false);
+        return 0;
+    }
 
-        steps = new Step[] {
-                () -> cpu.setCarry(false)
-        };
+    CLC(Cpu cpu, AddressingMode mode, int size, int cycles) {
+        this.cpu = cpu;
+        this.mode = mode;
+        this.size = size;
+        this.cycles = cycles;
     }
 }
 

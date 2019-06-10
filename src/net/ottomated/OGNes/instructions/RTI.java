@@ -4,26 +4,22 @@ import net.ottomated.OGNes.Cpu;
 
 class RTI extends Instruction {
 
-    private int pcl;
+    @Override
+    public int run(int addr, int cycleAdd) {
+        cpu.status = cpu.popStack();
+        cpu.pc = cpu.popStack();
+        cpu.pc += cpu.popStack() << 8;
+        if (cpu.pc == 0xffff) System.out.println("PC out of range?");
+        cpu.pc--;
+        // Set unused flag
+        return 0;
+    }
 
-    RTI(Cpu cpu, AddressingMode mode) {
+    RTI(Cpu cpu, AddressingMode mode, int size, int cycles) {
         this.cpu = cpu;
-        done = false;
         this.mode = mode;
-        length = 5;
-
-        steps = new Step[]{
-                () -> {
-                },
-                () -> {
-                },
-                () -> cpu.status = cpu.popStack(),
-                () -> pcl = cpu.popStack(),
-                () -> {
-                    int pch = cpu.popStack();
-                    cpu.pc = pcl + (pch << 2);
-                },
-        };
+        this.size = size;
+        this.cycles = cycles;
     }
 }
 

@@ -4,28 +4,19 @@ import net.ottomated.OGNes.Cpu;
 
 class RTS extends Instruction {
 
-    private int pcl;
+    public int run(int addr, int addStatus) {
 
-    RTS(Cpu cpu, AddressingMode mode) {
+        cpu.pc = cpu.popStack();
+        cpu.pc += cpu.popStack() << 8;
+        if (cpu.pc == 0xffff) System.out.println("PC out of range?");
+        return 0;
+    }
+
+    RTS(Cpu cpu, AddressingMode mode, int size, int cycles) {
         this.cpu = cpu;
-        done = false;
         this.mode = mode;
-        length = 5;
-
-        steps = new Step[]{
-                () -> {
-                },
-                () -> {
-                },
-                () -> pcl = cpu.popStack(),
-                () -> {
-                    int pch = cpu.popStack();
-                    cpu.pc = pcl + (pch << 2);
-                },
-                () -> {
-                    cpu.pc++;
-                }
-        };
+        this.size = size;
+        this.cycles = cycles;
     }
 }
 

@@ -3,20 +3,17 @@ package net.ottomated.OGNes.instructions;
 import net.ottomated.OGNes.Cpu;
 
 class INX extends Instruction {
+    public int run(int addr, int addCycles) {
+        cpu.x = (cpu.x + 1) & 0xff;
+        cpu.setZero(cpu.x == 0);
+        cpu.setNegative(((cpu.x >> 7) & 1) == 1); // If the 7th bit is 1
+        return 0;
+    }
 
-    INX(Cpu cpu, AddressingMode mode) {
+    INX(Cpu cpu, AddressingMode mode, int size, int cycles) {
         this.cpu = cpu;
-        done = false;
         this.mode = mode;
-        length = 1;
-
-        steps = new Step[] {
-                () -> {
-                    cpu.x++;
-                  cpu.setZero(cpu.x == 0);
-                  cpu.setNegative(((cpu.x >> 7) & 1) == 1); // If the 7th bit is 1
-                }
-        
-        };
+        this.size = size;
+        this.cycles = cycles;
     }
 }

@@ -2,19 +2,20 @@ package net.ottomated.OGNes.instructions;
 
 import net.ottomated.OGNes.Cpu;
 
-class LDX extends ReadInstruction {
+class LDX extends Instruction {
 
-    void finalStep() {
-        
-        cpu.setNegative(((m >> 7) & 1) == 1); // If the 7th bit is 1
-        cpu.setZero(m == 0);
-        cpu.x = m; // Don't overflow
+    public int run(int addr, int addCycles) {
+        cpu.x = cpu.load(addr);
+        cpu.setZero(cpu.x == 0);
+        cpu.setNegative(((cpu.x >> 7) & 1) == 1); // If the 7th bit is 1
+        return addCycles;
     }
 
-    LDX(Cpu cpu, AddressingMode mode) {
-        super(mode);
+    LDX(Cpu cpu, AddressingMode mode, int size, int cycles) {
         this.cpu = cpu;
-        done = false;
         this.mode = mode;
+        this.size = size;
+        this.cycles = cycles;
     }
+
 }

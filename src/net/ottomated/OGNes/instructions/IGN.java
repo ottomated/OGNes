@@ -2,14 +2,16 @@ package net.ottomated.OGNes.instructions;
 
 import net.ottomated.OGNes.Cpu;
 
-class NOP extends Instruction {
+class IGN extends Instruction {
 
     public int run(int addr, int addCycles) {
-        // NOP
-        return 0;
+        // Just load (TODO)
+        cpu.load(addr);
+        if (mode != AddressingMode.INDEXED_INDIRECT) return addCycles;
+        else return 0;
     }
 
-    NOP(Cpu cpu, AddressingMode mode, int size, int cycles) {
+    IGN(Cpu cpu, AddressingMode mode, int size, int cycles) {
         this.cpu = cpu;
         this.mode = mode;
         this.size = size;

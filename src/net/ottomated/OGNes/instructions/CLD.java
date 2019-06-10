@@ -4,15 +4,16 @@ import net.ottomated.OGNes.Cpu;
 
 class CLD extends Instruction {
 
-    CLD(Cpu cpu, AddressingMode mode) {
-        this.cpu = cpu;
-        done = false;
-        this.mode = mode;
-        length = 1;
+    public int run(int addr, int cycleAdd) {
+        cpu.setDecimalMode(false);
+        return 0;
+    }
 
-        steps = new Step[] {
-                () -> cpu.setDecimalMode(false)
-        };
+    CLD(Cpu cpu, AddressingMode mode, int size, int cycles) {
+        this.cpu = cpu;
+        this.mode = mode;
+        this.size = size;
+        this.cycles = cycles;
     }
 }
 

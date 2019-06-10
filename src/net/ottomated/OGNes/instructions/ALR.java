@@ -2,18 +2,19 @@ package net.ottomated.OGNes.instructions;
 
 import net.ottomated.OGNes.Cpu;
 
-class DEC extends Instruction {
+class ALR extends Instruction {
 
     @Override
     public int run(int addr, int cycleAdd) {
-        int res = (cpu.load(addr) - 1) & 0xff;
-        cpu.setZero(res == 0);
-        cpu.setNegative(((res >> 7) & 1) == 1); // If the 7th bit is 1
-        cpu.write(addr, res);
+        int res = cpu.a & cpu.load(addr);
+        cpu.setCarry((res & 1) == 1);
+        cpu.setNegative(false);
+        cpu.a = res >> 1;
+        cpu.setZero(cpu.a == 0);
         return 0;
     }
 
-    DEC(Cpu cpu, AddressingMode mode, int size, int cycles) {
+    ALR(Cpu cpu, AddressingMode mode, int size, int cycles) {
         this.cpu = cpu;
         this.mode = mode;
         this.size = size;

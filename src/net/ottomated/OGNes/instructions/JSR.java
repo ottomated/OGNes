@@ -4,21 +4,19 @@ import net.ottomated.OGNes.Cpu;
 
 class JSR extends Instruction {
 
-    private int pcl;
+    @Override
+    public int run(int addr, int cycleAdd) {
+        cpu.pushStack((cpu.pc >> 8) & 0xff);
+        cpu.pushStack(cpu.pc & 0xff);
+        cpu.pc = addr - 1;
+        return 0;
+    }
 
-    JSR(Cpu cpu, AddressingMode mode) {
+    JSR(Cpu cpu, AddressingMode mode, int size, int cycles) {
         this.cpu = cpu;
-        done = false;
         this.mode = mode;
-        length = 5;
-
-        steps = new Step[] {
-                () -> pcl = cpu.pop(),
-                () -> {},
-                () -> cpu.pushStack(cpu.pc & 0xff00),
-                () -> cpu.pushStack(cpu.pc & 0x00ff),
-                () -> cpu.pc = pcl + (cpu.pop() << 2)
-        };
+        this.size = size;
+        this.cycles = cycles;
     }
 }
 

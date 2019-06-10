@@ -4,32 +4,17 @@ import net.ottomated.OGNes.Cpu;
 
 class JMP extends Instruction {
 
-    private int pcl;
-    private int pl; // Pointer low
-    private int p; // Pointer
+    @Override
+    public int run(int addr, int cycleAdd) {
+        cpu.pc = addr - 1;
+        return 0;
+    }
 
-    JMP(Cpu cpu, AddressingMode mode) {
+    JMP(Cpu cpu, AddressingMode mode, int size, int cycles) {
         this.cpu = cpu;
-        done = false;
         this.mode = mode;
-        switch (mode) {
-            case ABSOLUTE:
-                length = 2;
-
-                steps = new Step[]{
-                        () -> pcl = cpu.pop(),
-                        () -> cpu.pc = pcl + (cpu.pop() << 2)
-                };
-            case INDIRECT:
-                length = 4;
-
-                steps = new Step[]{
-                        () -> pl = cpu.pop(),
-                        () -> p = pl + (cpu.pop() << 2),
-                        () -> pcl = cpu.peek(p),
-                        () -> cpu.pc = pcl + (cpu.peek(p + 1) << 2)
-                };
-        }
+        this.size = size;
+        this.cycles = cycles;
     }
 }
 

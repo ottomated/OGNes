@@ -4,17 +4,17 @@ import net.ottomated.OGNes.Cpu;
 
 class PHP extends Instruction {
 
-    PHP(Cpu cpu, AddressingMode mode) {
-        this.cpu = cpu;
-        done = false;
-        this.mode = mode;
-        length = 2;
+    @Override
+    public int run(int addr, int cycleAdd) {
+        cpu.pushStack(cpu.status);
+        return 0;
+    }
 
-        steps = new Step[]{
-                () -> {
-                },
-                () -> cpu.pushStack(cpu.status),
-        };
+    PHP(Cpu cpu, AddressingMode mode, int size, int cycles) {
+        this.cpu = cpu;
+        this.mode = mode;
+        this.size = size;
+        this.cycles = cycles;
     }
 }
 

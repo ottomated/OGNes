@@ -2,28 +2,27 @@ package net.ottomated.OGNes.instructions;
 
 import net.ottomated.OGNes.Cpu;
 
-class ROR extends Instruction {
+class LSR extends Instruction {
 
     public int run(int addr, int cycleAdd) {
-        int tmp, add;
+        int tmp;
         if (mode == AddressingMode.ACCUMULATOR) {
-            add = (cpu.getCarry() ? 1 : 0) << 7;
-            cpu.setCarry((cpu.a & 1) == 1);
-            tmp = (cpu.a >> 1) + add;
+            tmp = cpu.a & 0xff;
+            cpu.setCarry((tmp & 1) == 1);
+            tmp >>= 1;
             cpu.a = tmp;
         } else {
-            tmp = cpu.load(addr);
-            add = (cpu.getCarry() ? 1 : 0) << 7;
+            tmp = cpu.load(addr) & 0xff;
             cpu.setCarry((tmp & 1) == 1);
-            tmp = (tmp >> 1) + add;
+            tmp >>= 1;
             cpu.write(addr, tmp);
         }
-        cpu.setNegative(((tmp >> 7) & 1) == 1);
+        cpu.setNegative(false);
         cpu.setZero(tmp == 0);
         return 0;
     }
 
-    ROR(Cpu cpu, AddressingMode mode, int size, int cycles) {
+    LSR(Cpu cpu, AddressingMode mode, int size, int cycles) {
         this.cpu = cpu;
         this.mode = mode;
         this.size = size;

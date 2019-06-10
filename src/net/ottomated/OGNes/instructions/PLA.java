@@ -4,23 +4,19 @@ import net.ottomated.OGNes.Cpu;
 
 class PLA extends Instruction {
 
-    PLA(Cpu cpu, AddressingMode mode) {
+    @Override
+    public int run(int addr, int cycleAdd) {
+        cpu.a = cpu.popStack();
+        cpu.setZero(cpu.a == 0);
+        cpu.setNegative(((cpu.a >> 7) & 1) == 1); // If the 7th bit is 1
+        return 0;
+    }
+
+    PLA(Cpu cpu, AddressingMode mode, int size, int cycles) {
         this.cpu = cpu;
-        done = false;
         this.mode = mode;
-        length = 3;
-
-        steps = new Step[]{
-                () -> {
-                },
-                () -> {},
-                () -> {
-
-                    cpu.a = cpu.popStack();
-                    cpu.setZero(cpu.a == 0);
-                    cpu.setNegative(((cpu.a >> 7) & 1) == 1); // If the 7th bit is 1
-                },
-        };
+        this.size = size;
+        this.cycles = cycles;
     }
 }
 

@@ -4,18 +4,17 @@ import net.ottomated.OGNes.Cpu;
 
 class PLP extends Instruction {
 
-    PLP(Cpu cpu, AddressingMode mode) {
-        this.cpu = cpu;
-        done = false;
-        this.mode = mode;
-        length = 3;
+    @Override
+    public int run(int addr, int cycleAdd) {
+        cpu.status = cpu.popStack();
+        return 0;
+    }
 
-        steps = new Step[]{
-                () -> {
-                },
-                () -> {},
-                () -> cpu.status = cpu.popStack(),
-        };
+    PLP(Cpu cpu, AddressingMode mode, int size, int cycles) {
+        this.cpu = cpu;
+        this.mode = mode;
+        this.size = size;
+        this.cycles = cycles;
     }
 }
 

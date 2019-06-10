@@ -2,21 +2,23 @@ package net.ottomated.OGNes.instructions;
 
 import net.ottomated.OGNes.Cpu;
 
-class ORA extends Instruction {
+class RLA extends Instruction {
 
-    @Override
     public int run(int addr, int cycleAdd) {
-        int tmp = (cpu.load(addr) | cpu.a) & 0xff;
+        int tmp = cpu.load(addr);
+        int add = cpu.getCarry() ? 1 : 0;
+        cpu.setCarry(((tmp >> 7) & 1) == 1);
+        tmp = ((tmp << 1) & 0xff) + add;
+        cpu.write(addr, tmp);
 
+        cpu.a = cpu.a & tmp;
+        cpu.setNegative(((cpu.a >> 7) & 1) == 1);
         cpu.setZero(cpu.a == 0);
-        cpu.setNegative(((cpu.a >> 7) & 1) == 1); // If the 7th bit is 1
-        cpu.a = tmp;
         if (mode != AddressingMode.INDEXED_INDIRECT) return cycleAdd;
         else return 0;
     }
 
-
-    ORA(Cpu cpu, AddressingMode mode, int size, int cycles) {
+    RLA(Cpu cpu, AddressingMode mode, int size, int cycles) {
         this.cpu = cpu;
         this.mode = mode;
         this.size = size;

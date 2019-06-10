@@ -145,11 +145,89 @@ public class Cpu {
                     break;
             }
         }
-        if (instruction == null || instruction.done) {
-            instruction = Instruction.parse(this);
-        } else {
-            instruction.cycle();
+        instruction = Instruction.parse(this, mapper.read(pc + 1));
+        assert instruction != null : "Invalid instruction";
+        int addr = 0;
+        int opaddr = pc;
+        pc += instruction.size;
+        int cycleAdd = 0;
+        int cycleCount = 0;
+
+        switch (instruction.mode) {
+            case ZERO_PAGE:
+                addr = load(opaddr + 2);
+                break;
+            case RELATIVE:
+                addr = load(opaddr + 2);
+                if (addr < 0x80) {
+                    addr += pc;
+                } else {
+                    addr += pc - 256;
+                }
+                break;
+            case IMPLIED:
+                break;
+            case ABSOLUTE:
+                addr = load16Bit(opaddr + 2);
+                break;
+            case ACCUMULATOR:
+                addr = a;
+                break;
+            case IMMEDIATE:
+                addr = pc;
+                break;
+            case INDEXED_ZERO_PAGE_X:
+                addr = (load(opaddr + 2) + x) & 0xff;
+                break;
+            case INDEXED_ZERO_PAGE_Y:
+                addr = (load(opaddr + 2) + y) & 0xff;
+                break;
+            case INDEXED_ABSOLUTE_X:
+
+                addr = load16Bit(opaddr + 2);
+                if ((addr & 0xff00) != ((addr + x) & 0xff00)) {
+                    cycleAdd = 1;
+                }
+                addr += x;
+                break;
+            case INDEXED_ABSOLUTE_Y:
+
+                addr = load16Bit(opaddr + 2);
+                if ((addr & 0xff00) != ((addr + y) & 0xff00)) {
+                    cycleAdd = 1;
+                }
+                addr += y;
+                break;
+            case INDEXED_INDIRECT:
+
+                addr = load(opaddr + 2);
+                if ((addr & 0xff00) != ((addr + x) & 0xff00)) {
+                    cycleAdd = 1;
+                }
+                addr += x;
+                addr &= 0xff;
+                addr = load16Bit(addr);
+                break;
+            case INDIRECT_INDEXED:
+
+                addr = load16Bit(load(opaddr + 2));
+                if ((addr & 0xff00) != ((addr + y) & 0xff00)) {
+                    cycleAdd = 1;
+                }
+                addr += y;
+                break;
+            case INDIRECT:
+                addr = load16Bit(opaddr + 2);
+                if (addr < 0x1fff) {
+                    addr = memory[addr] + (memory[(addr & 0xff00) | (((addr & 0xff) + 1) & 0xff)] << 8);
+                } else {
+                    addr = mapper.read(addr) + (mapper.read((addr & 0xff00) | (((addr & 0xff) + 1) & 0xff)) << 8);
+                }
+                break;
         }
+        addr &= 0xffff;
+
+        cycleCount += instruction.run(addr, cycleAdd);
     }
 
     public void requestIrq(Interrupt type) {
@@ -167,23 +245,23 @@ public class Cpu {
         pushStack(status);
         setInterruptDisable(true);
         setBreak(false);
-        pc = peek(0xfffe) | (peek(0xffff) << 8);
+        pc = load(0xfffe) | (load(0xffff) << 8);
         pc--;
     }
 
     private void doNmi(int status) {
-        if ((peek(0x2000) & 128) != 0) {
+        if ((load(0x2000) & 128) != 0) {
             pc++;
             pushStack((pc >> 8) & 0xff);
             pushStack(pc & 0xff);
             pushStack(status);
-            pc = peek(0xfffa) | (peek(0xfffb) << 8);
+            pc = load(0xfffa) | (load(0xfffb) << 8);
             pc--;
         }
     }
 
     private void doResetInt() {
-        pc = peek(0xfffc) | (peek(0xfffd) << 8);
+        pc = load(0xfffc) | (load(0xfffd) << 8);
         pc--;
     }
 
@@ -206,11 +284,19 @@ public class Cpu {
         return mapper.read(pc - 1);
     }
 
-    public int peek(int loc) {
-        return mapper.read(loc);
+    public int load(int addr) {
+        return mapper.read(addr);
     }
 
-    public void set(int loc, int b) {
+    public int load16Bit(int addr) {
+        if (addr < 0x1fff) {
+            return memory[addr & 0x7ff] | (memory[(addr + 1) & 0x7ff] << 8);
+        } else {
+            return mapper.read(addr) | (mapper.read(addr + 1) << 8);
+        }
+    }
+
+    public void write(int loc, int b) {
         mapper.write(loc, b);
     }
 
