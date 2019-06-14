@@ -93,7 +93,7 @@ public class Cpu {
         return ((status >> i) & 1) == 1;
     }
 
-    private enum Interrupt {IRQ, NMI, RESET}
+    public enum Interrupt {IRQ, NMI, RESET}
 
     private Interrupt interrupt;
 

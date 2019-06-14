@@ -30,6 +30,8 @@ public class Graphics extends JFrame {
         setVisible(true);
     }
 
+
+
     @Override
     public void paint(java.awt.Graphics g) {
         super.paint(g);

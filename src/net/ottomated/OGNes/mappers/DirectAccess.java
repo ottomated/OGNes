@@ -71,7 +71,8 @@ public class DirectAccess extends Mapper {
                 nes.ppu.oamAddr = val;
                 break;
             case 0x2004:
-                nes.ppu.oamWrite(val);
+                nes.ppu.oamData = val;
+                nes.ppu.oamWrite();
                 break;
             case 0x2005:
                 nes.ppu.scrl = val;
@@ -80,7 +81,8 @@ public class DirectAccess extends Mapper {
                 nes.ppu.addr = val;
                 break;
             case 0x2007:
-                nes.ppu.vramWrite(val);
+                nes.ppu.data = val;
+                nes.ppu.writeMemory(nes.ppu.addr, val);
                 break;
             case 0x4014:
                 nes.ppu.oamDMAWrite(val);
