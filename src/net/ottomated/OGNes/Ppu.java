@@ -536,27 +536,6 @@ public class Ppu {
         }
 
         this.nes.graphics.writeFrame(buffer);
-        OTTO
-        OTTO
-        OTTO
-                OTTO
-        OTTO
-                OTTO
-        OTTO
-                OTTO
-        OTTO
-                OTTO
-        OTTO
-                OTTO
-        OTTO
-                OTTO
-        OTTOOTTO
-                OTTO
-        OTTO
-                OTTO
-        OTTO
-                OTTO
-
 
     }
 
