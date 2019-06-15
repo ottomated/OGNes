@@ -141,7 +141,7 @@ public class Cpu {
 
 
     public int cycle() {
-            System.out.println("A: " + a + " Status: " + Integer.toBinaryString(status) + " X: " + x + " Y: " + y + " PC: " + pc + " SP: " + sp + " instr: " + nes.mapper.read(pc + 1));
+        //System.out.print("A: " + a + " Status: " + Integer.toBinaryString(status) + " X: " + x + " Y: " + y + " PC: " + pc + " SP: " + sp + " instr: " + nes.mapper.read(pc + 1));
         if (interruptRequested) {
             pc_new = pc;
             switch (interrupt) {
@@ -242,6 +242,7 @@ public class Cpu {
                 break;
         }
         addr &= 0xffff;
+        //System.out.println("  addr: " + addr);
         //System.out.println(": "+ instruction + " 0x" + Integer.toHexString(addr));
         cycleCount += instruction.run(addr, cycleAdd);
         //System.out.println("Status: " + Integer.toBinaryString(status));
@@ -305,7 +306,11 @@ public class Cpu {
     }
 
     public int load(int addr) {
-        return nes.mapper.read(addr);
+        if (addr < 0x2000) {
+            return memory[addr & 0x7ff];
+        } else {
+            return nes.mapper.read(addr);
+        }
     }
 
     public int load16Bit(int addr) {

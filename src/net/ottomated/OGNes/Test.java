@@ -7,7 +7,7 @@ import java.io.*;
 public class Test {
 
     public static void main(String[] args) throws IOException {
-        Nes nes = new Nes("mario.nes");
+        Nes nes = new Nes("tank.nes");
     }
 
 }

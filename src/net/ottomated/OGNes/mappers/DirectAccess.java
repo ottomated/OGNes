@@ -6,9 +6,11 @@ import net.ottomated.OGNes.Tile;
 public class DirectAccess extends Mapper {
 
     private int joy1StrobeState;
+    private int joypadLastWrite;
 
     public void reset() {
         joy1StrobeState = 0;
+        joypadLastWrite = 0;
     }
 
     @Override
@@ -17,7 +19,7 @@ public class DirectAccess extends Mapper {
         addr &= 0xffff;
         //System.out.println("Read " + addr);
         if (addr > 0x4017) {
-            res =  nes.cpu.memory[addr];
+            res = nes.cpu.memory[addr];
         } else if (addr >= 0x2000) {
             // I/O Ports.
             res = regRead(addr);
@@ -65,7 +67,7 @@ public class DirectAccess extends Mapper {
                     case 2:
                         // 0x4017:
                         // TODO: Joystick 2 + Strobe
-                        return 0;
+                        return 72;
                 }
         }
         return 0;
@@ -143,6 +145,12 @@ public class DirectAccess extends Mapper {
                 nes.apu.writeReg(addr, val);
                 break;
             case 0x4016:
+
+                if ((val & 1) == 0 && (joypadLastWrite & 1) == 1) {
+                    this.joy1StrobeState = 0;
+                    //this.joy2StrobeState = 0;
+                }
+                joypadLastWrite = val;
                 // TODO: Joystick??
                 break;
             case 0x4017:
@@ -197,7 +205,6 @@ public class DirectAccess extends Mapper {
     }
 
     private void loadCHRROM() {
-        // console.log("Loading CHR ROM..");
         if (nes.rom.vromCount > 0) {
             if (nes.rom.vromCount == 1) {
                 loadVromBank(0, 0x0000);
@@ -212,8 +219,6 @@ public class DirectAccess extends Mapper {
     private void loadRomBank(int bank, int address) {
         // Loads a ROM bank into the specified address.
         bank %= nes.rom.romCount;
-        //var data = this.nes.rom.rom[bank];
-        //cpuMem.write(address,data,data.length);
         System.arraycopy(
                 this.nes.rom.rom[bank],
                 0,

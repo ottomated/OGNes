@@ -32,16 +32,13 @@ public class Nes {
 
         graphics = new Graphics();
         graphics.addKeyListener(controller);
-        while (true) {
-            frame();
-        }
         //System.out.println(ppu.palTable);
         //       frame();
         //     frame();
         //   frame();
     }
 
-    private void reset() {
+    public void reset() {
         if (mapper != null)
             mapper.reset();
         cpu.reset();
@@ -50,7 +47,8 @@ public class Nes {
     }
 
 
-    private void frame() {
+    public void frame() {
+        ppu.startFrame();
         int cycles = 0;
         boolean sound = true;
         boolean break_frameLoop = false;

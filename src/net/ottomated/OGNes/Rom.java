@@ -24,9 +24,7 @@ public class Rom {
         int i, j;
 
         byte[] b = Files.readAllBytes(f.toPath());
-
         assert (b[0] == 0x4E && b[1] == 0x45 && b[2] == 0x53 && b[3] == 0x1A);
-
         romCount = b[4];
         vromCount = b[5] * 2;
         mirroring = (b[6] & 1) != 0;
@@ -34,6 +32,7 @@ public class Rom {
         trainer = (b[6] & 4) != 0;
         fourScreen = (b[6] & 8) != 0;
         int mapperId = (b[6] >> 4) | (b[7] & 0xf0);
+        //System.out.println(romCount + " " + vromCount + " " + mirroring + " " + batteryRam + " " + trainer + " " + fourScreen);
 
         boolean foundError = false;
         for (i = 8; i < 16; i++) {

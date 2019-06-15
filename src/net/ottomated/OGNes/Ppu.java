@@ -214,7 +214,7 @@ public class Ppu {
 
         this.palTable = new PaletteTable();
         this.palTable.loadNTSCPalette();
-        //this.palTable.loadDefaultPalette();
+        this.palTable.loadDefaultPalette();
 
         this.updateControlReg1(0);
         this.updateControlReg2(0);
@@ -427,7 +427,7 @@ public class Ppu {
 
     public void startFrame() {
         // Set background color:
-        int bgColor = 0;
+        int bgColor;
 
         if (this.f_dispType == 0) {
             // Color display.
