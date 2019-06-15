@@ -7,7 +7,7 @@ import net.ottomated.OGNes.apu.TriangleChannel;
 
 public class Apu {
     public static final double CPU_FREQ_NTSC = 1789772.5;
-    Nes nes;
+    public Nes nes;
     SquareChannel square1;
     SquareChannel square2;
     TriangleChannel triangle;
@@ -164,9 +164,9 @@ public class Apu {
         minSample = 500000;
     }
 
-    int readReg(int address) {
+    public int readReg(int address) {
 
-        var tmp = 0;
+        int tmp = 0;
         tmp |= square1.getLengthStatus();
         tmp |= square2.getLengthStatus() << 1;
         tmp |= triangle.getLengthStatus() << 2;
@@ -181,7 +181,7 @@ public class Apu {
         return tmp & 0xffff;
     }
 
-    void writeReg(int address, int value) {
+    public void writeReg(int address, int value) {
         if (address >= 0x4000 && address < 0x4004) {
             // Square Wave 1 Control
             square1.writeReg(address, value);
@@ -256,7 +256,7 @@ public class Apu {
         dmc.setEnabled((value & 16) != 0);
     }
 
-    void clockFrameCounter(int nCycles) {
+    public void clockFrameCounter(int nCycles) {
         if (initCounter > 0) {
             if (initingHardware) {
                 initCounter -= nCycles;
@@ -269,7 +269,7 @@ public class Apu {
 
         // Don't process ticks beyond next sampling:
         nCycles += extraCycles;
-        var maxCycles = sampleTimerMax - sampleTimer;
+        int maxCycles = sampleTimerMax - sampleTimer;
         if (nCycles << 10 > maxCycles) {
             extraCycles = ((nCycles << 10) - maxCycles) >> 10;
             nCycles -= extraCycles;
@@ -330,7 +330,7 @@ public class Apu {
         }
 
         // Clock noise channel Prog timer:
-        var acc_c = nCycles;
+        int acc_c = nCycles;
         if (noise.progTimerCount - acc_c > 0) {
             // Do all cycles at once:
             noise.progTimerCount -= acc_c;
@@ -397,9 +397,8 @@ public class Apu {
     void accSample(int cycles) {
         // Special treatment for triangle channel - need to interpolate.
         if (triangle.sampleCondition) {
-            triValue = Math.floor(
-                    (triangle.progTimerCount << 4) / (triangle.progTimerMax + 1)
-            );
+            triValue = (triangle.progTimerCount << 4) / (triangle.progTimerMax + 1)
+            ;
             if (triValue > 16) {
                 triValue = 16;
             }
@@ -567,7 +566,7 @@ public class Apu {
         return lengthLookup[value >> 3];
     }
 
-    int getDmcFrequency(int value) {
+    public int getDmcFrequency(int value) {
         if (value >= 0 && value < 0x10) {
             return dmcFreqLookup[value];
         }

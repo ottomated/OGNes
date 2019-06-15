@@ -4,11 +4,11 @@ import net.ottomated.OGNes.Apu;
 
 public class NoiseChannel {
     private Apu apu;
-    private boolean isEnabled;
-    private int shiftReg;
-    private int progTimerCount;
-    private int progTimerMax;
-    private int lengthCounter;
+    public boolean isEnabled;
+    public int shiftReg;
+    public int progTimerCount;
+    public int progTimerMax;
+    public int lengthCounter;
     private boolean lengthCounterEnable;
     private boolean envDecayDisable;
     private boolean envDecayLoopEnable;
@@ -16,11 +16,13 @@ public class NoiseChannel {
     private int envDecayRate;
     private int envDecayCounter;
     private int envVolume;
-    private int masterVolume;
-    private int randomBit;
-    private int randomMode;
-    private int sampleValue;
-    private int tmp;
+    public int masterVolume;
+    public int randomBit;
+    public int randomMode;
+    public int sampleValue;
+    public int tmp;
+    public int accCount;
+    public int accValue;
     private boolean envReset;
 
     public NoiseChannel(Apu apu) {
@@ -47,6 +49,8 @@ public class NoiseChannel {
         randomMode = 0;
         sampleValue = 0;
         tmp = 0;
+        accCount = 1;
+        accValue = 0;
     }
 
     public void clockLengthCounter() {

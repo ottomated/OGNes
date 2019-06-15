@@ -159,7 +159,7 @@ public class SquareChannel {
     }
 
     public void writeReg(int address, int value) {
-        var addrAdd = isSquare1 ? 0 : 4;
+        int addrAdd = isSquare1 ? 0 : 4;
         if (address == 0x4000 + addrAdd) {
             // Volume/Envelope decay:
             envDecayDisable = (value & 0x10) != 0;

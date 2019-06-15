@@ -5,22 +5,22 @@ import net.ottomated.OGNes.Apu;
 public class TriangleChannel {
     private Apu apu;
 
-    private boolean isEnabled;
-    private int progTimerCount;
-    private int progTimerMax;
-    private int triangleCounter;
-    private boolean sampleCondition;
-    private int lengthCounter;
+    public boolean isEnabled;
+    public int progTimerCount;
+    public int progTimerMax;
+    public int triangleCounter;
+    public boolean sampleCondition;
+    public int lengthCounter;
     private boolean lengthCounterEnable;
-    private int linearCounter;
+    public int linearCounter;
     private int lcLoadValue;
     private boolean lcHalt;
     private boolean lcControl;
     private int tmp;
-    private int sampleValue;
+    public int sampleValue;
 
 
-    TriangleChannel(Apu apu) {
+    public TriangleChannel(Apu apu) {
         this.apu = apu;
         reset();
     }
