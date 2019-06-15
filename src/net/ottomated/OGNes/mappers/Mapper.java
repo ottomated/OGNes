@@ -91,5 +91,9 @@ public abstract class Mapper {
 
     public abstract int read(int addr);
 
+    public abstract void latchAccess(int addr); // Does nothing. This is used by the MMC2 mapper.
+
+    public abstract void clockIrqCounter(); // Does nothing. This is used by the MMC3 mapper.
+
     public abstract void write(int addr, int val);
 }

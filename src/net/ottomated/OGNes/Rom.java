@@ -101,5 +101,5 @@ public class Rom {
         return Mirroring.HORIZONTAL;
     }
 
-    enum Mirroring {FOURSCREEN, HORIZONTAL, VERTICAL}
+    enum Mirroring {FOURSCREEN, HORIZONTAL, VERTICAL, SINGLESCREEN, SINGLESCREEN2}
 }

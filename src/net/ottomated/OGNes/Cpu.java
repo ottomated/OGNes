@@ -302,7 +302,7 @@ public class Cpu {
 
     @Override
     public String toString() {
-        return "===== CPU =====\n" +
+        return "=== CPU ===\n" +
                 "PC: $" + Integer.toHexString(pc) +
                 "  memory[pc]: $" + Integer.toHexString(mapper.read(pc)) + "\n" +
                 "SP: $" + Integer.toHexString(sp) + "\n" +
