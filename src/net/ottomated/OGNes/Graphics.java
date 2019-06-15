@@ -8,6 +8,7 @@ public class Graphics extends JFrame {
 
     private Container pane;
     BufferedImage image;
+    int[] framebuffer;
 
     Graphics() {
         super("OGNes");
@@ -31,10 +32,17 @@ public class Graphics extends JFrame {
         setVisible(true);
     }
 
+    public void writeFrame(int [] buffer){
+        for(int  i = 0; i < 256*240; i++) framebuffer[i] = 0xFF000000 | buffer[i];
+    }
 
+    public void setImageToFrame(){
+        image.setRGB(0, 0, 256, 240, framebuffer, 0, 1);
+    }
 
     @Override
     public void paint(java.awt.Graphics g) {
+        setImageToFrame();
         super.paint(g);
         g.drawImage(image, 0, 0, 256, 240, null);
     }
