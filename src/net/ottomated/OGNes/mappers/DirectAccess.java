@@ -4,11 +4,20 @@ public class DirectAccess extends Mapper {
     @Override
     public int read(int addr) {
         addr &= 0xffff;
+        System.out.println("Read " + addr);
         if (addr < 0x2000) {
             return nes.cpu.memory[addr & 0x7ff];
-        }
-        if (addr > 0x4017) {
+        } else if (addr < 0x4000) {
+            return nes.ppu.readRegisters(addr & 0x2007);
+        } else if (addr >= 0x8000) {
+            addr -= 0x8000;
+            if (nes.rom.romCount == 1 && addr + 0x8000 >= 0xC000) {
+                addr -= 0x4000;
+            }
+            return nes.rom.rom[0][addr];
+        } else if (addr > 0x4017) {
             return nes.cpu.memory[addr];
+
         } else {
             return regRead(addr);
         }

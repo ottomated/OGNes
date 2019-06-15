@@ -16,6 +16,7 @@ public class Graphics extends JFrame {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ignored) {
         }
+        image = new BufferedImage(256, 240, BufferedImage.TYPE_4BYTE_ABGR );
         initGUI();
     }
 

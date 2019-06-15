@@ -8,16 +8,16 @@ import java.nio.file.Files;
 import java.util.Arrays;
 
 public class Rom {
-    int romCount;
-    int vromCount;
+    public int romCount;
+    public int vromCount;
     private boolean mirroring;
-    boolean batteryRam;
-    boolean trainer;
+    public boolean batteryRam;
+    public boolean trainer;
     private boolean fourScreen;
     Mapper mapper;
-    int[][] rom;
-    int[][] vrom;
-    Tile[][] vromTile;
+    public int[][] rom;
+    public int[][] vrom;
+    public Tile[][] vromTile;
 
 
     Rom(File f) throws IOException {
@@ -46,7 +46,7 @@ public class Rom {
             mapperId &= 0xf;
         }
         mapper = Mapper.fromID(mapperId);
-
+        System.out.println("Mapper " + mapperId);
         rom = new int[romCount][16384];
 
         int offset = 16;

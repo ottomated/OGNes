@@ -11,11 +11,13 @@ public class Cpu {
     public int sp; // Stack Pointer
 
     private Instruction instruction;
-    private Mapper mapper;
+    Mapper mapper;
 
     public int a; // Accumulator
     public int x; // Index Register X
     public int y; // Index Register Y
+
+    public int cyclesToHalt;
 
     // Processor Status
     // 0 => Carry (if last instruction resulted in under/overflow)
@@ -99,7 +101,7 @@ public class Cpu {
 
     void reset() {
         memory = new int[0x10000];
-        status = 0b00101000;
+        status = 0x34;
 
         int i;
 
@@ -115,11 +117,12 @@ public class Cpu {
             memory[j + 0x00a] = 0xdf;
             memory[j + 0x00f] = 0xbf;
         }
+        cyclesToHalt = 0;
         // Clear memory
         for (i = 0x2001; i < memory.length; i++) {
             this.memory[i] = 0;
         }
-        pc = 0x8000;
+        doResetInt();
         sp = 0x01ff;
 
         interrupt = null;
@@ -129,7 +132,8 @@ public class Cpu {
         mapper = rom.mapper;
     }
 
-    public void cycle() {
+    public int cycle() {
+        //System.out.println(pc);
         if (interrupt != null) {
             switch (interrupt) {
                 case IRQ:
@@ -146,6 +150,8 @@ public class Cpu {
             }
         }
         instruction = Instruction.parse(this, mapper.read(pc + 1));
+        System.out.println(instruction);
+        System.out.println(Integer.toBinaryString(status));
         assert instruction != null : "Invalid instruction";
         int addr = 0;
         int opaddr = pc;
@@ -228,6 +234,7 @@ public class Cpu {
         addr &= 0xffff;
 
         cycleCount += instruction.run(addr, cycleAdd);
+        return cycleCount;
     }
 
     public void requestIrq(Interrupt type) {
@@ -261,6 +268,7 @@ public class Cpu {
     }
 
     private void doResetInt() {
+        //System.out.println(load(0xfffc) + " -- " + load(0xfffd));
         pc = load(0xfffc) | (load(0xfffd) << 8);
         pc--;
     }
@@ -302,13 +310,13 @@ public class Cpu {
 
     @Override
     public String toString() {
-        return "=== CPU ===\n" +
-                "PC: $" + Integer.toHexString(pc) +
-                "  memory[pc]: $" + Integer.toHexString(mapper.read(pc)) + "\n" +
-                "SP: $" + Integer.toHexString(sp) + "\n" +
-                "X:  $" + Integer.toHexString(x) + "\n" +
-                "Y:  $" + Integer.toHexString(y) + "\n" +
-                "A:  $" + Integer.toHexString(a) + "\n" +
+        return "===== CPU =====\n" +
+                "PC: $" + pc +
+                "  memory[pc]: $" + mapper.read(pc) + "\n" +
+                "SP: $" + sp + "\n" +
+                "X:  $" + x + "\n" +
+                "Y:  $" + y + "\n" +
+                "A:  $" + a + "\n" +
                 "STATUS: 0b" + Integer.toBinaryString(status) + "\n" +
                 "Current instruction: " + instruction;
     }

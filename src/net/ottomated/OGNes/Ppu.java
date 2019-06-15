@@ -10,6 +10,12 @@ public class Ppu {
 
     Ppu(Nes n) {
         nes = n;
+
+        nameTableRegister = new Register(8);
+        attributeTableLowRegister= new Register(16);
+        attributeTableHighRegister= new Register(16);
+        patternTableLowRegister= new Register(16);
+        patternTableHighRegister= new Register(16);
     }
 
     int [] vramMem = null;
@@ -1477,6 +1483,7 @@ public class Ppu {
         for (int i = 0; i < 256; i++) {
             oam[i] = nes.cpu.memory[highByte * 256 + i];
         }
+        nes.cpu.cyclesToHalt += 513;
     }
 
     public ArrayList<Sprite> initSprites(int[] memory) {
@@ -1670,6 +1677,7 @@ public class Ppu {
         vRAM = new int[0x10000];
         oam = new int[0x100];
 
+        stat = 0x80;
         ctrl = 0;
         mask = 0;
         scrl = 0;
@@ -1686,6 +1694,16 @@ public class Ppu {
             vRAM[i] = 0;
         }
 
+    }
+
+    public void run() {
+        render();
+        updateShiftRegisters();
+        fetch();
+        evaluateSprites();
+        updateFlags();
+        updateScrollCounters();
+        updateCycle();
     }
 
     public int peek(int loc) {
@@ -1752,7 +1770,7 @@ public class Ppu {
             int value = stat;
             setVBlank(false);
             registerFirstStore = true;
-            return stat;
+            return value;
         }
 
         if (address == 0x2004) {
@@ -2216,7 +2234,7 @@ public class Ppu {
         int spriteId = spriteIds[x];
         int spritePriority = spritePriorities[x];
 
-        int c = this.palette[this.readMemory(0x3F00)];
+        int c = Ppu.palette[this.readMemory(0x3F00)];
 
 
         // TODO: fix me
@@ -2254,7 +2272,6 @@ public class Ppu {
 
         //if (c != 0xff000000 && c != 0xff757575)
         //   dup[c] = c;
-
         nes.graphics.image.setRGB(x, y, c);
     }
     */
