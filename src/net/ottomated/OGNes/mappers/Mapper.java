@@ -84,10 +84,10 @@ public abstract class Mapper {
     }
 
     public static Mapper fromID(int id) {
-        return null;
+        return new DirectAccess();
     }
 
-    Nes nes;
+    public Nes nes;
 
     public abstract int read(int addr);
 
