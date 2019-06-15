@@ -96,4 +96,8 @@ public abstract class Mapper {
     public abstract void clockIrqCounter(); // Does nothing. This is used by the MMC3 mapper.
 
     public abstract void write(int addr, int val);
+
+    public abstract void loadROM();
+
+    public abstract void reset();
 }

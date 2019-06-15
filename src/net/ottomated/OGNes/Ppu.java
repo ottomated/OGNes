@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 public class Ppu {
     Nes nes;
-    Rom rom = nes.rom;
-    Cpu cpu = nes.cpu;
+    Rom rom;
+    Cpu cpu;
 
     public static final int STATUS_VRAMWRITE = 4;
     public static final int STATUS_SLSPRITECOUNT = 5;
@@ -15,10 +15,12 @@ public class Ppu {
 
     Ppu(Nes n) {
         nes = n;
+        rom = nes.rom;
+        cpu = nes.cpu;
         reset();
     }
 
-    int[] vramMem = null;
+    public int[] vramMem = null;
     int[] spriteMem = null;
     int vramAddress;
     int vramTmpAddress;
@@ -62,7 +64,7 @@ public class Ppu {
     int[] bgbuffer = null;
     int[] pixrendered;
 
-    ArrayList<Tile> scantile;
+    Tile[] scantile;
     int scanline;
     int lastRenderedScanline;
     int curX;
@@ -78,9 +80,9 @@ public class Ppu {
     boolean hitSpr0;
     int[] sprPalette = null;
     int[] imgPalette = null;
-    ArrayList<Tile> ptTile;
+    public Tile[] ptTile;
     int[] ntable1 = null;
-    ArrayList<NameTable> nameTable = null;
+    NameTable[] nameTable = null;
     int[] vramMirrorTable = null;
     PaletteTable palTable = null;
     // Rendering Options:
@@ -89,6 +91,9 @@ public class Ppu {
 
     public void reset() {
         int i;
+        ptTile = new Tile[512];
+        nameTable = new NameTable[4];
+        scantile = new Tile[32];
 
         // Memory
         this.vramMem = new int[0x8000];
@@ -189,7 +194,7 @@ public class Ppu {
         //this.ptTile = new Tile[512];
 
         for (i = 0; i < 512; i++) {
-            this.ptTile.add(new Tile());
+            this.ptTile[i] = new Tile();
         }
 
         // Create nametable buffers:
@@ -198,7 +203,7 @@ public class Ppu {
         //this.currentMirroring = -1;
         //this.nameTable = new int[4];
         for (i = 0; i < 4; i++) {
-            this.nameTable.add(new NameTable(32, 32, "Nt" + i));
+            this.nameTable[i] = new NameTable(32, 32, "Nt" + i);
         }
 
         // Initialize mirroring lookup table:
@@ -338,7 +343,7 @@ public class Ppu {
                 this.setStatusFlag(Ppu.STATUS_VBLANK, false);
 
                 // Clear Sprite #0 hit flag:
-                this.setStatusFlag(this.STATUS_SPRITE0HIT, false);
+                this.setStatusFlag(STATUS_SPRITE0HIT, false);
                 this.hitSpr0 = false;
                 this.spr0HitX = -1;
                 this.spr0HitY = -1;
@@ -371,7 +376,7 @@ public class Ppu {
             case 261:
                 // Dead scanline, no rendering.
                 // Set VINT:
-                this.setStatusFlag(this.STATUS_VBLANK, true);
+                this.setStatusFlag(STATUS_VBLANK, true);
                 this.requestEndFrame = true;
                 this.nmiCounter = 9;
 
@@ -591,7 +596,7 @@ public class Ppu {
         this.firstWrite = true;
 
         // Clear VBlank flag:
-        this.setStatusFlag(this.STATUS_VBLANK, false);
+        this.setStatusFlag(Ppu.STATUS_VBLANK, false);
 
         // Fetch status data:
         return tmp;
@@ -920,12 +925,6 @@ public class Ppu {
 
         if (scan < 240 && scan - this.cntFV >= 0) {
             int tscanoffset = this.cntFV << 3;
-            ArrayList<Tile> scantile = this.scantile;
-            int[] attrib = this.attrib;
-            ArrayList<Tile> ptTile = this.ptTile;
-            ArrayList<NameTable> nameTable = this.nameTable;
-            int[] imgPalette = this.imgPalette;
-            int[] pixrendered = this.pixrendered;
             int[] targetBuffer = bgbuffer ? this.bgbuffer : this.buffer;
 
             Tile t;
@@ -937,7 +936,7 @@ public class Ppu {
                     // Fetch tile & attrib data:
                     if (this.validTileData) {
                         // Get data from array:
-                        t = scantile.get(tile);
+                        t = scantile[tile];
                         if (t == null){
                             continue;
                         }
@@ -945,13 +944,13 @@ public class Ppu {
                         att = attrib[tile];
                     } else {
                         // Fetch data:
-                        t = ptTile.get(baseTile + nameTable.get(this.curNt).getTileIndex(this.cntHT, this.cntVT));
+                        t = ptTile[baseTile + nameTable[this.curNt].getTileIndex(this.cntHT, this.cntVT)];
                         if (t == null){
                             continue;
                         }
                         tpix = t.pixels;
-                        att = nameTable.get(this.curNt).getAttrib(this.cntHT, this.cntVT);
-                        scantile.set(tile, t);
+                        att = nameTable[this.curNt].getAttrib(this.cntHT, this.cntVT);
+                        scantile[tile] = t;
                         attrib[tile] = att;
                     }
 
@@ -1043,7 +1042,7 @@ public class Ppu {
                         }
 
                         if (this.f_spPatternTable == 0) {
-                            this.ptTile.get(this.sprTile[i]).render(
+                            this.ptTile[this.sprTile[i]].render(
                                     this.buffer,
                                     0,
                                     srcy1,
@@ -1059,7 +1058,7 @@ public class Ppu {
                                     this.pixrendered
                             );
                         } else {
-                            this.ptTile.get(this.sprTile[i] + 256).render(
+                            this.ptTile[this.sprTile[i] + 256].render(
                                     this.buffer,
                                     0,
                                     srcy1,
@@ -1093,7 +1092,7 @@ public class Ppu {
                             srcy2 = startscan + scancount - this.sprY[i];
                         }
 
-                        this.ptTile.get(top + (this.vertFlip[i] ? 1 : 0)).render(
+                        this.ptTile[top + (this.vertFlip[i] ? 1 : 0)].render(
                                 this.buffer,
                                 0,
                                 srcy1,
@@ -1120,7 +1119,7 @@ public class Ppu {
                             srcy2 = startscan + scancount - (this.sprY[i] + 8);
                         }
 
-                        this.ptTile.get(top + (this.vertFlip[i] ? 0 : 1)).render(
+                        this.ptTile[top + (this.vertFlip[i] ? 0 : 1)].render(
                                 this.buffer,
                                 0,
                                 srcy1,
@@ -1161,7 +1160,7 @@ public class Ppu {
             if (y <= scan && y + 8 > scan && x >= -7 && x < 256) {
                 // Sprite is in range.
                 // Draw scanline:
-                t = this.ptTile.get(this.sprTile[0] + tIndexAdd);
+                t = this.ptTile[this.sprTile[0] + tIndexAdd];
 
                 if (this.vertFlip[0]) {
                     toffset = 7 - (scan - y);
@@ -1225,18 +1224,18 @@ public class Ppu {
 
                 if (toffset < 8) {
                     // first half of sprite.
-                    t = this.ptTile.get(
+                    t = this.ptTile[
                             this.sprTile[0] +
                                     (this.vertFlip[0] ? 1 : 0) +
                                     ((this.sprTile[0] & 1) != 0 ? 255 : 0)
-                    );
+                    ];
                 } else {
                     // second half of sprite.
-                    t = this.ptTile.get(
+                    t = this.ptTile[
                             this.sprTile[0] +
                                     (this.vertFlip[0] ? 0 : 1) +
                                     ((this.sprTile[0] & 1) != 0 ? 255 : 0)
-                    );
+                            ];
                     if (this.vertFlip[0]) {
                         toffset = 15 - toffset;
                     } else {
@@ -1353,13 +1352,13 @@ public class Ppu {
         int tileIndex = (int) Math.floor(address / 16);
         int leftOver = address % 16;
         if (leftOver < 8) {
-            this.ptTile.get(tileIndex).setScanline(
+            this.ptTile[tileIndex].setScanline(
                     leftOver,
                     value,
                     this.vramMem[address + 8]
             );
         } else {
-            this.ptTile.get(tileIndex).setScanline(
+            this.ptTile[tileIndex].setScanline(
                     leftOver - 8,
                     this.vramMem[address - 8],
                     value
@@ -1370,7 +1369,7 @@ public class Ppu {
     // Updates the internal name table buffers
     // with this new byte.
     public void nameTableWrite(int index, int address, int value) {
-        this.nameTable.get(index).tile[address] = value;
+        this.nameTable[index].tile[address] = value;
 
         // Update Sprite #0 hit:
         //updateSpr0Hit();
@@ -1381,7 +1380,7 @@ public class Ppu {
     // table buffers with this new attribute
     // table byte.
     public void attribTableWrite(int index, int address, int value) {
-        this.nameTable.get(index).writeAttrib(address, value);
+        this.nameTable[index].writeAttrib(address, value);
     }
 
     // Updates the internally buffered sprite

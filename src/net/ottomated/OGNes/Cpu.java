@@ -1,23 +1,31 @@
 package net.ottomated.OGNes;
 
 import net.ottomated.OGNes.instructions.Instruction;
-import net.ottomated.OGNes.mappers.Mapper;
+
+import java.io.BufferedWriter;
+import java.io.File;
 
 public class Cpu {
 
+    private Nes nes;
     public int[] memory; // 0x10000 bytes
 
     public int pc; // Program Counter
+    public int pc_new;
     public int sp; // Stack Pointer
 
     private Instruction instruction;
-    Mapper mapper;
+
 
     public int a; // Accumulator
     public int x; // Index Register X
     public int y; // Index Register Y
 
     public int cyclesToHalt;
+
+    public Cpu(Nes nes) {
+        this.nes = nes;
+    }
 
     // Processor Status
     // 0 => Carry (if last instruction resulted in under/overflow)
@@ -97,6 +105,7 @@ public class Cpu {
 
     public enum Interrupt {IRQ, NMI, RESET}
 
+    private boolean interruptRequested;
     private Interrupt interrupt;
 
     void reset() {
@@ -122,19 +131,19 @@ public class Cpu {
         for (i = 0x2001; i < memory.length; i++) {
             this.memory[i] = 0;
         }
-        doResetInt();
+        pc = 0x8000 - 1;
+        pc_new = 0x8000 - 1;
         sp = 0x01ff;
 
         interrupt = null;
+        interruptRequested = false;
     }
 
-    void loadRom(Rom rom) {
-        mapper = rom.mapper;
-    }
 
     public int cycle() {
-        //System.out.println(pc);
-        if (interrupt != null) {
+            System.out.println("A: " + a + " Status: " + Integer.toBinaryString(status) + " X: " + x + " Y: " + y + " PC: " + pc + " SP: " + sp + " instr: " + nes.mapper.read(pc + 1));
+        if (interruptRequested) {
+            pc_new = pc;
             switch (interrupt) {
                 case IRQ:
                     if (getInterruptDisable())
@@ -148,16 +157,17 @@ public class Cpu {
                     doResetInt();
                     break;
             }
+            pc = pc_new;
+            interruptRequested = false;
         }
-        instruction = Instruction.parse(this, mapper.read(pc + 1));
-        System.out.println(instruction);
-        System.out.println(Integer.toBinaryString(status));
+        instruction = Instruction.parse(this, nes.mapper.read(pc + 1));
+        //System.out.print("0x" + Integer.toHexString(pc));
         assert instruction != null : "Invalid instruction";
         int addr = 0;
         int opaddr = pc;
         pc += instruction.size;
         int cycleAdd = 0;
-        int cycleCount = 0;
+        int cycleCount = instruction.cycles;
 
         switch (instruction.mode) {
             case ZERO_PAGE:
@@ -227,54 +237,56 @@ public class Cpu {
                 if (addr < 0x1fff) {
                     addr = memory[addr] + (memory[(addr & 0xff00) | (((addr & 0xff) + 1) & 0xff)] << 8);
                 } else {
-                    addr = mapper.read(addr) + (mapper.read((addr & 0xff00) | (((addr & 0xff) + 1) & 0xff)) << 8);
+                    addr = nes.mapper.read(addr) + (nes.mapper.read((addr & 0xff00) | (((addr & 0xff) + 1) & 0xff)) << 8);
                 }
                 break;
         }
         addr &= 0xffff;
-
+        //System.out.println(": "+ instruction + " 0x" + Integer.toHexString(addr));
         cycleCount += instruction.run(addr, cycleAdd);
+        //System.out.println("Status: " + Integer.toBinaryString(status));
         return cycleCount;
     }
 
     public void requestIrq(Interrupt type) {
-        if (interrupt != null) {
+        if (interruptRequested) {
             if (type == Interrupt.IRQ)
                 return;
         }
+        interruptRequested = true;
         interrupt = type;
     }
 
     private void doIrq(int status) {
-        pc++;
-        pushStack((pc >> 8) & 0xff);
-        pushStack(pc & 0xff);
+        pc_new++;
+        pushStack((pc_new >> 8) & 0xff);
+        pushStack(pc_new & 0xff);
         pushStack(status);
         setInterruptDisable(true);
         setBreak(false);
-        pc = load(0xfffe) | (load(0xffff) << 8);
-        pc--;
+        pc_new = load(0xfffe) | (load(0xffff) << 8);
+        pc_new--;
     }
 
     private void doNmi(int status) {
         if ((load(0x2000) & 128) != 0) {
-            pc++;
-            pushStack((pc >> 8) & 0xff);
-            pushStack(pc & 0xff);
+            pc_new++;
+            pushStack((pc_new >> 8) & 0xff);
+            pushStack(pc_new & 0xff);
             pushStack(status);
-            pc = load(0xfffa) | (load(0xfffb) << 8);
-            pc--;
+            pc_new = load(0xfffa) | (load(0xfffb) << 8);
+            pc_new--;
         }
     }
 
     private void doResetInt() {
         //System.out.println(load(0xfffc) + " -- " + load(0xfffd));
-        pc = load(0xfffc) | (load(0xfffd) << 8);
-        pc--;
+        pc_new = load(0xfffc) | (load(0xfffd) << 8);
+        pc_new--;
     }
 
     public void pushStack(int b) {
-        mapper.write(sp, b);
+        nes.mapper.write(sp, b);
         sp--;
         if (sp < 0x0100) sp = 0x01ff;
         else if (sp > 0x01ff) sp = 0x0100;
@@ -284,35 +296,35 @@ public class Cpu {
         sp++;
         if (sp < 0x0100) sp = 0x01ff;
         else if (sp > 0x01ff) sp = 0x0100;
-        return mapper.read(sp);
+        return nes.mapper.read(sp);
     }
 
     public int pop() {
         pc++;
-        return mapper.read(pc - 1);
+        return nes.mapper.read(pc - 1);
     }
 
     public int load(int addr) {
-        return mapper.read(addr);
+        return nes.mapper.read(addr);
     }
 
     public int load16Bit(int addr) {
         if (addr < 0x1fff) {
             return memory[addr & 0x7ff] | (memory[(addr + 1) & 0x7ff] << 8);
         } else {
-            return mapper.read(addr) | (mapper.read(addr + 1) << 8);
+            return nes.mapper.read(addr) | (nes.mapper.read(addr + 1) << 8);
         }
     }
 
     public void write(int loc, int b) {
-        mapper.write(loc, b);
+        nes.mapper.write(loc, b);
     }
 
     @Override
     public String toString() {
         return "===== CPU =====\n" +
                 "PC: $" + pc +
-                "  memory[pc]: $" + mapper.read(pc) + "\n" +
+                "  memory[pc]: $" + nes.mapper.read(pc) + "\n" +
                 "SP: $" + sp + "\n" +
                 "X:  $" + x + "\n" +
                 "Y:  $" + y + "\n" +

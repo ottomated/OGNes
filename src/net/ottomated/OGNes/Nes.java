@@ -4,6 +4,7 @@ import net.ottomated.OGNes.mappers.Mapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Nes {
     public static final int SAMPLE_RATE = 44100;
@@ -17,26 +18,32 @@ public class Nes {
     public Controller controller;
 
     Nes(String romPath) throws IOException {
-        File program = new File(romPath);
-        rom = new Rom(program);
-        mapper = rom.mapper;
-
-        mapper.nes = this;
-        cpu = new Cpu();
-        cpu.loadRom(rom);
-        cpu.reset();
-
+        cpu = new Cpu(this);
         ppu = new Ppu(this);
+        apu = new Apu(this);
+        controller = new Controller();
 
-        //apu = new Apu(this);
+        rom = new Rom(new File(romPath));
+        reset();
+        mapper = rom.mapper;
+        mapper.nes = this;
+        mapper.loadROM();
+        ppu.setMirroring(rom.getMirroring());
 
         graphics = new Graphics();
-        controller = new Controller();
         graphics.addKeyListener(controller);
-        reset();
+        while (true) {
+            frame();
+        }
+        //System.out.println(ppu.palTable);
+        //       frame();
+        //     frame();
+        //   frame();
     }
 
     private void reset() {
+        if (mapper != null)
+            mapper.reset();
         cpu.reset();
         ppu.reset();
         apu.reset();
@@ -45,17 +52,27 @@ public class Nes {
 
     private void frame() {
         int cycles = 0;
+        boolean sound = true;
         boolean break_frameLoop = false;
         for (; ; ) {
             if (cpu.cyclesToHalt == 0) {
                 cycles = cpu.cycle();
+                if (sound) {
+                    apu.clockFrameCounter(cycles);
+                }
                 cycles *= 3;
             } else {
                 if (cpu.cyclesToHalt > 8) {
                     cycles = 24;
+                    if (sound) {
+                        apu.clockFrameCounter(cycles);
+                    }
                     cpu.cyclesToHalt -= 8;
                 } else {
                     cycles = cpu.cyclesToHalt * 3;
+                    if (sound) {
+                        apu.clockFrameCounter(cpu.cyclesToHalt);
+                    }
                     cpu.cyclesToHalt = 0;
                 }
             }

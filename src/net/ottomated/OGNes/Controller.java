@@ -5,7 +5,7 @@ import java.awt.event.KeyListener;
 
 public class Controller implements KeyListener {
 
-    int[] state;
+    public int[] state;
 
     public class Button {
         static final int A = 0, B = 1, SELECT = 2, START = 3, UP = 4, DOWN = 5, LEFT = 6, RIGHT = 7;

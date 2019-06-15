@@ -3,11 +3,13 @@ package net.ottomated.OGNes;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 public class Graphics extends JFrame {
+    public static final int SCALE = 3;
 
     private Container pane;
-    BufferedImage image;
+    Painter painter;
     int[] framebuffer;
 
     Graphics() {
@@ -17,33 +19,24 @@ public class Graphics extends JFrame {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ignored) {
         }
-        image = new BufferedImage(256, 240, BufferedImage.TYPE_4BYTE_ABGR );
+        framebuffer = new int[256 * 240];
         initGUI();
     }
 
     private void initGUI() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         pane = getContentPane();
-        pane.setLayout(null);
-        pane.setPreferredSize(new Dimension(256, 240));
+        painter = new Painter();
+        pane.add(painter);
+        pane.setPreferredSize(new Dimension(256 * SCALE, 240 * SCALE));
         pack();
         setLocationRelativeTo(null);
         setResizable(false);
         setVisible(true);
     }
 
-    public void writeFrame(int [] buffer){
-        for(int  i = 0; i < 256*240; i++) framebuffer[i] = 0xFF000000 | buffer[i];
-    }
-
-    public void setImageToFrame(){
-        image.setRGB(0, 0, 256, 240, framebuffer, 0, 1);
-    }
-
-    @Override
-    public void paint(java.awt.Graphics g) {
-        setImageToFrame();
-        super.paint(g);
-        g.drawImage(image, 0, 0, 256, 240, null);
+    public void writeFrame(int[] buffer) {
+        if (painter != null)
+            painter.draw(buffer);
     }
 }

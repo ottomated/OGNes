@@ -1,5 +1,7 @@
 package net.ottomated.OGNes;
 
+import java.util.Arrays;
+
 public class PaletteTable {
     int[] curTable;
     int[][] emphTable;
@@ -163,6 +165,11 @@ public class PaletteTable {
 
         this.makeTables();
         this.setEmphasis(0);
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.toString(curTable);
     }
 }
 
