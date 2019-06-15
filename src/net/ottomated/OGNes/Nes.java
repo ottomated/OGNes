@@ -28,7 +28,7 @@ public class Nes {
 
         ppu = new Ppu(this);
 
-        apu = new Apu(this);
+        //apu = new Apu(this);
 
         graphics = new Graphics();
         controller = new Controller();
@@ -45,7 +45,8 @@ public class Nes {
 
     private void frame() {
         int cycles = 0;
-        for (;;) {
+        boolean break_frameLoop = false;
+        for (; ; ) {
             if (cpu.cyclesToHalt == 0) {
                 cycles = cpu.cycle();
                 cycles *= 3;
@@ -55,12 +56,29 @@ public class Nes {
                     cpu.cyclesToHalt -= 8;
                 } else {
                     cycles = cpu.cyclesToHalt * 3;
-                    cpu.cyclesToHalt = 0
+                    cpu.cyclesToHalt = 0;
                 }
             }
             for (; cycles > 0; cycles--) {
-                if(ppu.)
+                if (ppu.curX == ppu.spr0HitX && ppu.f_spVisibility == 1 && ppu.scanline - 21 == ppu.spr0HitY) {
+                    ppu.setStatusFlag(Ppu.STATUS_SPRITE0HIT, true);
+                }
+                if (ppu.requestEndFrame) {
+                    ppu.nmiCounter--;
+                    if (ppu.nmiCounter == 0) {
+                        ppu.requestEndFrame = false;
+                        ppu.startVBlank();
+                        break_frameLoop = true;
+                        break;
+                    }
+                }
+                ppu.curX++;
+                if (ppu.curX == 341) {
+                    ppu.curX = 0;
+                    ppu.endScanline();
+                }
             }
+            if (break_frameLoop) break;
         }
     }
 }
