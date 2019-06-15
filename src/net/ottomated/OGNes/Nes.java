@@ -6,8 +6,11 @@ import java.io.File;
 import java.io.IOException;
 
 public class Nes {
+    public static final int SAMPLE_RATE = 44100;
+    public static final int PREFERRED_FRAME_RATE = 60;
     public Cpu cpu;
     public Ppu ppu;
+    public Apu apu;
     public Mapper mapper;
     public Rom rom;
     public Graphics graphics;
@@ -25,22 +28,20 @@ public class Nes {
 
         ppu = new Ppu(this);
 
+        apu = new Apu(this);
+
         graphics = new Graphics();
         controller = new Controller();
         graphics.addKeyListener(controller);
-        start();
+        reset();
     }
 
-    private void start() {
-        int count = 341 * 262 / 3;
-        for (int i = 0; i < count; i++) {
-            cpu.cycle();
-            ppu.run();
-            ppu.run();
-            ppu.run();
-        }
-        start();
+    private void reset() {
+        cpu.reset();
+        ppu.reset();
+        apu.reset();
     }
+
 
     private void frame() {
         int cycles = 0;
