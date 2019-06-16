@@ -552,7 +552,7 @@ public class Apu {
         }
 
 
-        //    nes.opts.onAudioSample(sampleValueL / 32768, sampleValueR / 32768);
+        nes.playAudio(sampleValueL / 32768.0f, sampleValueR / 32768.0f);
 
 
         // Reset sampled values:

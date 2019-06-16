@@ -2,9 +2,9 @@ package net.ottomated.OGNes;
 
 import net.ottomated.OGNes.mappers.Mapper;
 
+import javax.sound.sampled.LineUnavailableException;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class Nes {
     public static final int SAMPLE_RATE = 44100;
@@ -16,8 +16,9 @@ public class Nes {
     public Rom rom;
     public Graphics graphics;
     public Controller controller;
+    public AudioOut speakers;
 
-    Nes(String romPath) throws IOException {
+    Nes(String romPath) throws IOException, LineUnavailableException {
         cpu = new Cpu(this);
         ppu = new Ppu(this);
         apu = new Apu(this);
@@ -31,6 +32,7 @@ public class Nes {
         ppu.setMirroring(rom.getMirroring());
 
         graphics = new Graphics();
+        speakers = new AudioOut();
         graphics.addKeyListener(controller);
         //System.out.println(ppu.palTable);
         //       frame();
@@ -95,5 +97,8 @@ public class Nes {
             }
             if (break_frameLoop) break;
         }
+    }
+    void playAudio(float left, float right) {
+        speakers.play(left, right);
     }
 }
