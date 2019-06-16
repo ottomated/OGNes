@@ -140,7 +140,7 @@ public class Cpu {
     }
 
 
-    public int cycle() {
+    int cycle() throws Exception {
         //System.out.print("A: " + a + " Status: " + Integer.toBinaryString(status) + " X: " + x + " Y: " + y + " PC: " + pc + " SP: " + sp + " instr: " + nes.mapper.read(pc + 1));
         if (interruptRequested) {
             pc_new = pc;
@@ -162,7 +162,7 @@ public class Cpu {
         }
         instruction = Instruction.parse(this, nes.mapper.read(pc + 1));
         //System.out.print("0x" + Integer.toHexString(pc));
-        assert instruction != null : "Invalid instruction";
+        if (instruction == null) throw new Exception("Invalid instruction");
         int addr = 0;
         int opaddr = pc;
         pc += instruction.size;

@@ -1,20 +1,22 @@
 package net.ottomated.OGNes;
 
-import com.sun.corba.se.impl.orbutil.graph.Graph;
-
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
+import java.io.File;
 
 public class Painter extends JPanel {
     private BufferedImage img;
-    private Graphics2D canvas;
+    String fps = "";
 
     Painter() {
         super();
         img = new BufferedImage(256, 240, BufferedImage.TYPE_INT_ARGB);
-        canvas = img.createGraphics();
+        try {
+            img = ImageIO.read(new File("assets/splash.png"));
+        } catch (Exception ignored) {
+        }
     }
 
     void draw(int[] buffer) {
@@ -41,6 +43,9 @@ public class Painter extends JPanel {
     protected void paintComponent(java.awt.Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        g2.drawImage(img, 0, 0, 256 * Graphics.SCALE, 240 * Graphics.SCALE,  null);
+        g2.drawImage(img, 0, 0, 256 * Graphics.SCALE, 240 * Graphics.SCALE, null);
+        Font f = new Font(Font.MONOSPACED, Font.PLAIN, 20);
+        g2.setFont(f);
+        g2.drawString(fps, 10, 20);
     }
 }

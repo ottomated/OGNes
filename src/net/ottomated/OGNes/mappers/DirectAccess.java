@@ -5,11 +5,10 @@ import net.ottomated.OGNes.Tile;
 
 public class DirectAccess extends Mapper {
 
-    private int joy1StrobeState;
+    private int[] joyStrobeState = new int[]{0, 0};
     private int joypadLastWrite;
 
     public void reset() {
-        joy1StrobeState = 0;
         joypadLastWrite = 0;
     }
 
@@ -63,19 +62,19 @@ public class DirectAccess extends Mapper {
 
                     case 1:
                         // 0x4016:
-                        return joy1Read();
+                        return joyRead(0);
                     case 2:
                         // 0x4017:
-                        // TODO: Joystick 2 + Strobe
-                        return 72;
+
+                        return joyRead(1);
                 }
         }
         return 0;
     }
 
-    private int joy1Read() {
+    private int joyRead(int stick) {
         int ret;
-        switch (joy1StrobeState) {
+        switch (joyStrobeState[stick]) {
             case 0:
             case 1:
             case 2:
@@ -84,7 +83,7 @@ public class DirectAccess extends Mapper {
             case 5:
             case 6:
             case 7:
-                ret = this.nes.controller.state[joy1StrobeState];
+                ret = this.nes.controllers[stick].state[joyStrobeState[stick]];
                 break;
             case 8:
             case 9:
@@ -105,9 +104,9 @@ public class DirectAccess extends Mapper {
             default:
                 ret = 0;
         }
-        joy1StrobeState++;
-        if (joy1StrobeState == 24) {
-            joy1StrobeState = 0;
+        joyStrobeState[stick]++;
+        if (joyStrobeState[stick] == 24) {
+            joyStrobeState[stick] = 0;
         }
         //System.out.println("Controller read: " + ret);
         return ret;
@@ -147,11 +146,11 @@ public class DirectAccess extends Mapper {
             case 0x4016:
 
                 if ((val & 1) == 0 && (joypadLastWrite & 1) == 1) {
-                    this.joy1StrobeState = 0;
+                    joyStrobeState[0] = 0;
+                    joyStrobeState[1] = 0;
                     //this.joy2StrobeState = 0;
                 }
                 joypadLastWrite = val;
-                // TODO: Joystick??
                 break;
             case 0x4017:
                 nes.apu.writeReg(addr, val);
@@ -192,7 +191,7 @@ public class DirectAccess extends Mapper {
         nes.cpu.requestIrq(Cpu.Interrupt.RESET);
     }
 
-    public void loadPRGROM() {
+    private void loadPRGROM() {
         if (nes.rom.romCount > 1) {
             // Load the two first banks into memory.
             loadRomBank(0, 0x8000);

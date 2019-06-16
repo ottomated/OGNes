@@ -6,26 +6,29 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
 public class Graphics extends JFrame {
-    public static final int SCALE = 3;
+    static final int SCALE = 3;
 
-    private Container pane;
-    Painter painter;
-    int[] framebuffer;
+    private Painter painter;
+    private int[] fpsHistory;
+    private int fpsCursor;
+    volatile boolean showFps;
 
-    Graphics() {
+
+    Graphics(Nes nes) {
         super("OGNes");
-
+        fpsHistory = new int[10];
+        fpsCursor = 0;
+        setJMenuBar(new OGMenuBar(this, nes));
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ignored) {
         }
-        framebuffer = new int[256 * 240];
         initGUI();
     }
 
     private void initGUI() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        pane = getContentPane();
+        Container pane = getContentPane();
         painter = new Painter();
         pane.add(painter);
         pane.setPreferredSize(new Dimension(256 * SCALE, 240 * SCALE));
@@ -35,8 +38,19 @@ public class Graphics extends JFrame {
         setVisible(true);
     }
 
-    public void writeFrame(int[] buffer) {
+    void writeFrame(int[] buffer) {
         if (painter != null)
             painter.draw(buffer);
+    }
+    void setFps(long between) {
+        if (!showFps) return;
+        fpsHistory[fpsCursor] = (int) (1000 / between);
+        fpsCursor ++;
+        if (fpsCursor > 9) fpsCursor = 0;
+        int sum = 0;
+        for (int f : fpsHistory) {
+            sum += f;
+        }
+        painter.fps = (sum / fpsHistory.length) + " fps";
     }
 }

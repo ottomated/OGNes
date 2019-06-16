@@ -509,7 +509,7 @@ public abstract class Instruction {
                 return new IGN(cpu, AddressingMode.INDEXED_ZERO_PAGE_X, 2, 4);
 
             default:
-                System.out.println("Unimplemented opcode " + Integer.toHexString(opcode));
+                System.out.println("Unimplemented opcode $" + Integer.toHexString(opcode));
                 return null;
         }
     }
