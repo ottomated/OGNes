@@ -109,13 +109,13 @@ public class Cpu {
     private Interrupt interrupt;
 
     void reset() {
+        int i;
         memory = new int[0x10000];
         status = 0x34;
 
-        int i;
 
         // RAM
-        for (i = 0; i <= 0x2000; i++) {
+        for (i = 0; i < 0x2000; i++) {
             this.memory[i] = 0xFF;
         }
 
@@ -128,8 +128,8 @@ public class Cpu {
         }
         cyclesToHalt = 0;
         // Clear memory
-        for (i = 0x2001; i < memory.length; i++) {
-            this.memory[i] = 0;
+        for (int k = 0x2001; k < memory.length; k++) {
+            this.memory[k] = 0;
         }
         pc = 0x8000 - 1;
         pc_new = 0x8000 - 1;
@@ -139,6 +139,21 @@ public class Cpu {
         interruptRequested = false;
     }
 
+    private String hex(int i) {
+        return Integer.toHexString(i).toUpperCase();
+    }
+    private void log(Instruction instruction, int addr) {
+        System.out.print(hex(pc) + "  ");
+        String bytes = hex(nes.mapper.read(pc + 1)) + " " + hex(nes.mapper.read(pc + 2)) + " " + hex(nes.mapper.read(pc + 3)) + "  ";
+        System.out.print(bytes);
+        System.out.print(new String(new char[10 - bytes.length()]).replace('\0', ' '));
+        System.out.print(instruction.getClass().getSimpleName() + " ");
+        System.out.print(hex(addr) + "                       ");
+        System.out.print("A:" + hex(a) + " X:" + hex(x) + " Y:" + hex(y) + " P:" + hex(status) + " SP:" + hex(sp));
+        System.out.print("PPU: " + nes.ppu.curX + ", " + nes.ppu.scanline);
+
+        System.out.println();
+    }
 
     int cycle() throws Exception {
         //System.out.print("A: " + a + " Status: " + Integer.toBinaryString(status) + " X: " + x + " Y: " + y + " PC: " + pc + " SP: " + sp + " instr: " + nes.mapper.read(pc + 1));
@@ -242,10 +257,13 @@ public class Cpu {
                 break;
         }
         addr &= 0xffff;
+        //log(instruction, addr);
         //System.out.println("  addr: " + addr);
         //System.out.println(": "+ instruction + " 0x" + Integer.toHexString(addr));
+        //System.out.print(nes.mapper.read(pc + 1) + " ");
         cycleCount += instruction.run(addr, cycleAdd);
         //System.out.println("Status: " + Integer.toBinaryString(status));
+        //System.out.println(cycleCount);
         return cycleCount;
     }
 

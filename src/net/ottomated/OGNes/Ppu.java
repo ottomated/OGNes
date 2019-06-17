@@ -17,7 +17,7 @@ public class Ppu {
     }
 
     public int[] vramMem = null;
-    private int[] spriteMem = null;
+    int[] spriteMem = null;
     private int vramAddress;
     private int vramTmpAddress;
     private int vramBufferedReadValue;

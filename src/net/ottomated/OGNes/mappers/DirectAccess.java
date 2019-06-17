@@ -3,6 +3,8 @@ package net.ottomated.OGNes.mappers;
 import net.ottomated.OGNes.Cpu;
 import net.ottomated.OGNes.Tile;
 
+import java.util.Arrays;
+
 public class DirectAccess extends Mapper {
 
     private int[] joyStrobeState = new int[]{0, 0};
@@ -10,6 +12,7 @@ public class DirectAccess extends Mapper {
 
     public void reset() {
         joypadLastWrite = 0;
+        joyStrobeState = new int[]{0, 0};
     }
 
     @Override
@@ -148,7 +151,6 @@ public class DirectAccess extends Mapper {
                 if ((val & 1) == 0 && (joypadLastWrite & 1) == 1) {
                     joyStrobeState[0] = 0;
                     joyStrobeState[1] = 0;
-                    //this.joy2StrobeState = 0;
                 }
                 joypadLastWrite = val;
                 break;

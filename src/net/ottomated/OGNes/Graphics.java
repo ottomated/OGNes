@@ -6,8 +6,6 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
 public class Graphics extends JFrame {
-    static final int SCALE = 3;
-
     private Painter painter;
     private int[] fpsHistory;
     private int fpsCursor;
@@ -31,7 +29,7 @@ public class Graphics extends JFrame {
         Container pane = getContentPane();
         painter = new Painter();
         pane.add(painter);
-        pane.setPreferredSize(new Dimension(256 * SCALE, 240 * SCALE));
+        pane.setPreferredSize(new Dimension(256 * Main.settings.scale, 240 * Main.settings.scale));
         pack();
         setLocationRelativeTo(null);
         setResizable(false);

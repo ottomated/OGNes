@@ -2,28 +2,38 @@ package net.ottomated.OGNes;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.swing.*;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+
+import org.json.*;
 
 public class Main {
     static Nes nes;
     static volatile int fps = 60;
-    public static void main(String[] args) throws IOException, InterruptedException, LineUnavailableException {
-        nes = new Nes();
-        Main.startFrameLoop();
-        /*
-        while (true) {
-            long now = System.currentTimeMillis();
-            long target = (long) (now + 1000.0 / 60.0);
-            nes.frame();
-            long diff = target - System.currentTimeMillis();
-            if (diff > 0) {
-                Thread.sleep(diff);
-            } else {
-                System.out.println(diff);
+    static Settings settings;
+    static File settingsFile;
+
+    public static void main(String[] args) throws IOException {
+        settingsFile = new File("settings.json");
+        if (settingsFile.exists()) {
+            try {
+                JSONObject json = new JSONObject(new String(Files.readAllBytes(settingsFile.toPath())));
+                settings = new Settings(json);
+            } catch (JSONException e) {
+                settings = new Settings();
+                settings.save(settingsFile);
             }
-        }*/
+        } else {
+            settings = new Settings();
+            settings.save(settingsFile);
+        }
+        fps = new int[]{6, 30, 60, 60000}[settings.speed.ordinal()];
+        nes = new Nes();
+        startFrameLoop();
     }
-    public static void startFrameLoop() {
+
+    private static void startFrameLoop() {
         long now = System.currentTimeMillis();
 
         while (true) {
@@ -33,7 +43,7 @@ public class Main {
             long target = (long) (now + 1000.0 / fps);
             try {
                 nes.frame();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 JOptionPane.showMessageDialog(nes.graphics, e.toString(), "Emulation Error", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
                 nes.ready = false;

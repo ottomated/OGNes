@@ -4,7 +4,7 @@ import javax.sound.sampled.*;
 import java.util.Arrays;
 
 class AudioOut {
-    public static final int BUFFER = 1024;
+    public static final int BUFFER = 4096;
     private byte[] buf;
     private int cursor;
     SourceDataLine line;

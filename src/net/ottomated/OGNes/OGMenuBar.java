@@ -7,6 +7,8 @@ import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Collections;
 
@@ -22,8 +24,12 @@ class OGMenuBar extends JMenuBar {
         initFileMenu();
         initEmulateMenu();
         initViewMenu();
-    }
+        JMenu download = new JMenu("Download");
+        download.addActionListener(actionEvent -> {
 
+        });
+        add(download);
+    }
 
 
     private void initFileMenu() {
@@ -58,8 +64,51 @@ class OGMenuBar extends JMenuBar {
             }
         });
         JMenuItem tas = new JMenuItem("Load TAS Movie...");
+        tas.addActionListener(actionEvent -> {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+            chooser.setFileFilter(new FileFilter() {
+                @Override
+                public boolean accept(File file) {
+                    if (file.isDirectory()) return true;
+                    String p = file.getPath();
+                    int i = p.lastIndexOf(".");
+                    if (i == -1) return false;
+                    else return p.substring(i).equalsIgnoreCase(".fm2");
+                }
+
+                @Override
+                public String getDescription() {
+                    return ".fm2 files";
+                }
+            });
+            int res = chooser.showDialog(frame, "Load");
+            if (res == JFileChooser.APPROVE_OPTION) {
+                try {
+                    //nes.loadRom(nes.romFile.getPath());
+                    nes.playTAS(chooser.getSelectedFile().getPath());
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(frame, e.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        JMenuItem settings = new JMenuItem("Settings");
+        settings.addActionListener(actionEvent -> {
+            SettingsWindow win = new SettingsWindow();
+            win.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    super.windowClosing(e);
+                    try {
+                        nes.loadRom(nes.romFile.getPath());
+                    } catch (Exception ignored) {
+                    }
+                }
+            });
+        });
         menu.add(rom);
         menu.add(tas);
+        menu.add(settings);
         add(menu);
     }
 
@@ -87,7 +136,7 @@ class OGMenuBar extends JMenuBar {
         for (AbstractButton b : Collections.list(fps.getElements())) {
             speed.add(b);
             b.addActionListener(actionEvent -> {
-                switch(b.getText()) {
+                switch (b.getText()) {
                     case "6 fps (0.1x)":
                         Main.fps = 6;
                         break;
@@ -127,7 +176,7 @@ class OGMenuBar extends JMenuBar {
         for (AbstractButton b : Collections.list(pal.getElements())) {
             palMenu.add(b);
             b.addActionListener(actionEvent -> {
-                switch(b.getText()) {
+                switch (b.getText()) {
                     case "Default":
                         nes.ppu.palTable.loadDefaultPalette();
                         break;

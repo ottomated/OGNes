@@ -2,6 +2,7 @@ package net.ottomated.OGNes;
 
 import net.ottomated.OGNes.mappers.Mapper;
 
+import javax.sound.sampled.Line;
 import javax.sound.sampled.LineUnavailableException;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -29,24 +30,23 @@ public class Nes {
     volatile boolean inFrame = false;
     volatile boolean sound = true;
     public File romFile;
+    int frameCount;
 
     Nes() {
         graphics = new Graphics(this);
     }
 
-    void loadRom(String path) throws IOException, LineUnavailableException {
+    void loadRom(String path, boolean setReadyWhenDone) throws IOException, LineUnavailableException {
+
         ready = false;
+        frameCount = 0;
         cpu = new Cpu(this);
         ppu = new Ppu(this);
         apu = new Apu(this);
         controllers = new Controller[2];
-        controllers[0] = new Controller(new int[]{
-                KeyEvent.VK_W, KeyEvent.VK_A, KeyEvent.VK_S, KeyEvent.VK_D, KeyEvent.VK_1, KeyEvent.VK_2, KeyEvent.VK_T, KeyEvent.VK_Y
-        });
 
-        controllers[1] = new Controller(new int[]{
-                KeyEvent.VK_UP, KeyEvent.VK_LEFT, KeyEvent.VK_DOWN, KeyEvent.VK_RIGHT, KeyEvent.VK_SHIFT, KeyEvent.VK_ENTER, KeyEvent.VK_COMMA, KeyEvent.VK_PERIOD
-        });
+        controllers[0] = new Controller(Main.settings.controller0);
+        controllers[1] = new Controller(Main.settings.controller1);
         ControllerMaster controllerMaster = new ControllerMaster(controllers);
 
         romFile = new File(path);
@@ -60,7 +60,13 @@ public class Nes {
         speakers = new AudioOut();
         graphics.removeKeyListener(controllerMaster);
         graphics.addKeyListener(controllerMaster);
-        ready = true;
+        for (int i = 0; i < ppu.spriteMem.length; i ++) {
+            System.out.println(ppu.spriteMem[i]);
+        }
+        ready = setReadyWhenDone;
+    }
+    void loadRom(String path) throws IOException, LineUnavailableException {
+        loadRom(path, true);
     }
 
     public void reset() {
@@ -70,17 +76,17 @@ public class Nes {
         ppu.reset();
         apu.reset();
     }
-    public void softReset() {
-        ready = false;
-        reset();
-        ready = true;
-    }
 
     void frame() throws Exception {
         inFrame = true;
         ppu.startFrame();
-        int cycles = 0;
+        int cycles;
         boolean break_frameLoop = false;
+        if (TAS) {
+            controllers[0].state = video.get(videoIndex)[0];
+            controllers[1].state = video.get(videoIndex)[1];
+            videoIndex++;
+        }
         do {
             if (cpu.cyclesToHalt == 0) {
                 cycles = cpu.cycle();
@@ -105,6 +111,7 @@ public class Nes {
             }
             for (; cycles > 0; cycles--) {
                 if (ppu.curX == ppu.spr0HitX && ppu.f_spVisibility == 1 && ppu.scanline - 21 == ppu.spr0HitY) {
+                    System.out.println(frameCount);
                     ppu.setStatusFlag(Ppu.STATUS_SPRITE0HIT, true);
                 }
                 if (ppu.requestEndFrame) {
@@ -123,11 +130,7 @@ public class Nes {
                 }
             }
         } while (!break_frameLoop);
-        if (TAS) {
-            controllers[0].state = video.get(videoIndex)[0];
-            controllers[1].state = video.get(videoIndex)[1];
-            videoIndex++;
-        }
+        frameCount++;
         inFrame = false;
     }
 
@@ -135,7 +138,9 @@ public class Nes {
         speakers.play(left, right);
     }
 
-    void playTAS(String path) throws IOException {
+    void playTAS(String path) throws IOException, LineUnavailableException {
+        loadRom(romFile.getPath(), false);
+
         TAS = true;
         video = new ArrayList<>();
         videoIndex = 0;
@@ -169,6 +174,7 @@ public class Nes {
             video.add(new int[][]{input0, input1});
         }
         graphics.removeKeyListener(controllerMaster);
+        ready = true;
     }
 
     private int getButton(char c) {
