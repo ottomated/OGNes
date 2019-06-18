@@ -7,10 +7,11 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class Settings {
+class Settings {
 
     enum Speed {
         SIX, THIRTY, SIXTY, MAX
@@ -24,7 +25,7 @@ public class Settings {
     String savePath;
     int scale;
 
-    Settings() {
+    Settings() throws URISyntaxException {
         speed = Speed.SIXTY;
         scale = 3;
         controller0 = new int[]{
@@ -33,9 +34,9 @@ public class Settings {
         controller1 = new int[]{
                 KeyEvent.VK_UP, KeyEvent.VK_LEFT, KeyEvent.VK_DOWN, KeyEvent.VK_RIGHT, KeyEvent.VK_SHIFT, KeyEvent.VK_ENTER, KeyEvent.VK_COMMA, KeyEvent.VK_PERIOD
         };
-        romPath = Paths.get(System.getProperty("user.dir"), "roms").toString();
-        tasPath = Paths.get(System.getProperty("user.dir"), "movies").toString();
-        savePath = Paths.get(System.getProperty("user.dir"), "saves").toString();
+        romPath = Paths.get(Main.getDir(), "roms").toString();
+        tasPath = Paths.get(Main.getDir(), "movies").toString();
+        savePath = Paths.get(Main.getDir(), "saves").toString();
     }
 
     Settings(JSONObject json) {
@@ -60,6 +61,12 @@ public class Settings {
         try (PrintWriter out = new PrintWriter(file)) {
             out.println(json.toString());
         }
-        System.out.println(json.toString());
+        try {
+            new File(romPath).mkdirs();
+            new File(tasPath).mkdirs();
+            new File(savePath).mkdirs();
+        } catch(Exception ignored) {
+
+        }
     }
 }

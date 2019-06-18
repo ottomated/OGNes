@@ -156,6 +156,7 @@ public class Cpu {
     }
 
     int cycle() throws Exception {
+        if (!nes.ready) return 0;
         //System.out.print("A: " + a + " Status: " + Integer.toBinaryString(status) + " X: " + x + " Y: " + y + " PC: " + pc + " SP: " + sp + " instr: " + nes.mapper.read(pc + 1));
         if (interruptRequested) {
             pc_new = pc;

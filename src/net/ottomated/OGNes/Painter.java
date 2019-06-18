@@ -14,7 +14,7 @@ public class Painter extends JPanel {
         super();
         img = new BufferedImage(256, 240, BufferedImage.TYPE_INT_ARGB);
         try {
-            img = ImageIO.read(new File("assets/splash.png"));
+            img = ImageIO.read(getClass().getResource("/resources/splash.png"));
         } catch (Exception ignored) {
         }
     }

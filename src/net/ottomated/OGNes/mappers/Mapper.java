@@ -83,8 +83,13 @@ public abstract class Mapper {
         }
     }
 
-    public static Mapper fromID(int id) {
-        return new DirectAccess();
+    public static Mapper fromID(int id) throws IllegalArgumentException {
+        switch (id) {
+            case 0:
+                return new DirectAccess();
+            default:
+                throw new IllegalArgumentException("Mapper \"" + name(id) + "\" (" + id + ") not implemented");
+        }
     }
 
     public Nes nes;

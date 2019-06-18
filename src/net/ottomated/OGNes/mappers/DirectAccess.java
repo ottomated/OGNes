@@ -65,11 +65,12 @@ public class DirectAccess extends Mapper {
 
                     case 1:
                         // 0x4016:
-                        return joyRead(0);
+                        return nes.controllers[0].read();
+                        //return joyRead(0);
                     case 2:
                         // 0x4017:
-
-                        return joyRead(1);
+                        return nes.controllers[1].read();
+                        //return joyRead(1);
                 }
         }
         return 0;
@@ -86,20 +87,7 @@ public class DirectAccess extends Mapper {
             case 5:
             case 6:
             case 7:
-                ret = this.nes.controllers[stick].state[joyStrobeState[stick]];
-                break;
-            case 8:
-            case 9:
-            case 10:
-            case 11:
-            case 12:
-            case 13:
-            case 14:
-            case 15:
-            case 16:
-            case 17:
-            case 18:
-                ret = 0;
+                ret = 0;//this.nes.controllers[stick].state[joyStrobeState[stick]];
                 break;
             case 19:
                 ret = 1;
@@ -147,12 +135,8 @@ public class DirectAccess extends Mapper {
                 nes.apu.writeReg(addr, val);
                 break;
             case 0x4016:
-
-                if ((val & 1) == 0 && (joypadLastWrite & 1) == 1) {
-                    joyStrobeState[0] = 0;
-                    joyStrobeState[1] = 0;
-                }
-                joypadLastWrite = val;
+                nes.controllers[0].write(val);
+                nes.controllers[1].write(val);
                 break;
             case 0x4017:
                 nes.apu.writeReg(addr, val);

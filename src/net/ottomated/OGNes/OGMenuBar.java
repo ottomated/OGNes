@@ -1,5 +1,7 @@
 package net.ottomated.OGNes;
 
+import com.sun.deploy.uitoolkit.impl.awt.ui.DownloadWindow;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -10,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Collections;
 
 class OGMenuBar extends JMenuBar {
@@ -24,9 +27,10 @@ class OGMenuBar extends JMenuBar {
         initFileMenu();
         initEmulateMenu();
         initViewMenu();
-        JMenu download = new JMenu("Download");
+        JMenuItem download = new JMenuItem("Download");
         download.addActionListener(actionEvent -> {
-
+            System.out.println(actionEvent);
+            DownloaderWindow win = new DownloaderWindow(nes);
         });
         add(download);
     }
@@ -38,7 +42,7 @@ class OGMenuBar extends JMenuBar {
         JMenuItem rom = new JMenuItem("Load Rom...");
         rom.addActionListener(actionEvent -> {
             JFileChooser chooser = new JFileChooser();
-            chooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+            chooser.setCurrentDirectory(new File(Main.settings.romPath));
             chooser.setFileFilter(new FileFilter() {
                 @Override
                 public boolean accept(File file) {
@@ -54,7 +58,7 @@ class OGMenuBar extends JMenuBar {
                     return ".NES files";
                 }
             });
-            int res = chooser.showDialog(frame, "Load");
+            int res = chooser.showDialog(frame, "Load ROM");
             if (res == JFileChooser.APPROVE_OPTION) {
                 try {
                     nes.loadRom(chooser.getSelectedFile().getPath());
@@ -66,7 +70,7 @@ class OGMenuBar extends JMenuBar {
         JMenuItem tas = new JMenuItem("Load TAS Movie...");
         tas.addActionListener(actionEvent -> {
             JFileChooser chooser = new JFileChooser();
-            chooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+            chooser.setCurrentDirectory(new File(Main.settings.tasPath));
             chooser.setFileFilter(new FileFilter() {
                 @Override
                 public boolean accept(File file) {
@@ -82,7 +86,7 @@ class OGMenuBar extends JMenuBar {
                     return ".fm2 files";
                 }
             });
-            int res = chooser.showDialog(frame, "Load");
+            int res = chooser.showDialog(frame, "Load TAS");
             if (res == JFileChooser.APPROVE_OPTION) {
                 try {
                     //nes.loadRom(nes.romFile.getPath());

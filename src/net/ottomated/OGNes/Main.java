@@ -4,7 +4,9 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.json.*;
 
@@ -14,8 +16,13 @@ public class Main {
     static Settings settings;
     static File settingsFile;
 
-    public static void main(String[] args) throws IOException {
-        settingsFile = new File("settings.json");
+    static String getDir() throws URISyntaxException {
+            return new File(Main.class.getProtectionDomain().getCodeSource().getLocation()
+                    .toURI()).getParentFile().getPath();
+    }
+
+    public static void main(String[] args) throws Exception {
+        settingsFile = new File(Paths.get(getDir(), "settings.json").toString());
         if (settingsFile.exists()) {
             try {
                 JSONObject json = new JSONObject(new String(Files.readAllBytes(settingsFile.toPath())));

@@ -10,10 +10,11 @@ public class Graphics extends JFrame {
     private int[] fpsHistory;
     private int fpsCursor;
     volatile boolean showFps;
-
+    Nes nes;
 
     Graphics(Nes nes) {
         super("OGNes");
+        this.nes = nes;
         fpsHistory = new int[10];
         fpsCursor = 0;
         setJMenuBar(new OGMenuBar(this, nes));

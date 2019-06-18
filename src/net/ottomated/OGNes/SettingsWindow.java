@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
 import java.util.Objects;
 
 class SettingsWindow extends JFrame {
@@ -179,9 +180,89 @@ class SettingsWindow extends JFrame {
         controllers.setDefaultEditor(String.class, new KeyCellEditor(this));
         keymap.add(controllers);
         pane.addTab("Keymap", keymap);
-        JComponent panel3 = new JPanel();
-        pane.addTab("Paths", panel3);
+        JPanel paths = new JPanel();
+        paths.setLayout(new GridBagLayout());
+        setupPaths(paths);
+        pane.addTab("Paths", paths);
     }
+
+    private void setupPaths(JPanel paths) {
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridy = 0;
+        paths.add(new JLabel("Roms"), c);
+        c.gridwidth = 2;
+        JTextField romF =new JTextField(Main.settings.romPath);
+        paths.add(romF, c);
+        JButton romBtn = new JButton("...");
+        c.gridwidth = 1;
+        paths.add(romBtn, c);
+        c.gridy = 1;
+        paths.add(new JLabel("Movies"), c);
+
+        c.gridwidth = 2;
+        JTextField tasF = new JTextField(Main.settings.tasPath);
+        paths.add(tasF, c);
+        JButton tasBtn = new JButton("...");
+        c.gridwidth = 1;
+        paths.add(tasBtn, c);
+        c.gridy = 2;
+        paths.add(new JLabel("Saves"), c);
+        c.gridwidth = 2;
+        JTextField saveF = new JTextField(Main.settings.savePath);
+        paths.add(saveF, c);
+        JButton saveBtn = new JButton("...");
+        c.gridwidth = 1;
+        paths.add(saveBtn, c);
+        JFrame self = this;
+
+        romBtn.addActionListener(e -> {
+            JFileChooser c1 = new JFileChooser();
+            c1.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            c1.setCurrentDirectory(new File(Main.settings.romPath));
+
+            int res = c1.showDialog(self, "Change ROM path");
+            if (res == JFileChooser.APPROVE_OPTION) {
+                Main.settings.romPath = c1.getSelectedFile().getPath();
+                try {
+                    Main.settings.save(Main.settingsFile);
+                    romF.setText(Main.settings.romPath);
+                } catch (Exception ignored) {
+                }
+            }
+        });
+        tasBtn.addActionListener(e -> {
+            JFileChooser c2 = new JFileChooser();
+            c2.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            c2.setCurrentDirectory(new File(Main.settings.tasPath));
+
+            int res = c2.showDialog(self, "Change TAS path");
+            if (res == JFileChooser.APPROVE_OPTION) {
+                Main.settings.tasPath = c2.getSelectedFile().getPath();
+                try {
+                    Main.settings.save(Main.settingsFile);
+                    tasF.setText(Main.settings.tasPath);
+                } catch (Exception ignored) {
+                }
+            }
+        });
+        saveBtn.addActionListener(e -> {
+            JFileChooser c3 = new JFileChooser();
+            c3.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            c3.setCurrentDirectory(new File(Main.settings.savePath));
+
+            int res = c3.showDialog(self, "Change save path");
+            if (res == JFileChooser.APPROVE_OPTION) {
+                Main.settings.savePath = c3.getSelectedFile().getPath();
+
+                try {
+                    Main.settings.save(Main.settingsFile);
+                    saveF.setText(Main.settings.savePath);
+                } catch (Exception ignored) {
+                }
+            }
+        });
+    }
+
 
     private class KeyCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
 
@@ -220,7 +301,8 @@ class SettingsWindow extends JFrame {
                 }
 
                 private void collect(KeyEvent e) {
-                    key = e.getKeyCode();
+                    if (e.getKeyCode() != KeyEvent.VK_ESCAPE)
+                        key = e.getKeyCode();
                     dialog.dispose();
                     fireEditingStopped();
                 }

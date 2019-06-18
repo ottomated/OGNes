@@ -24,7 +24,7 @@ public class Nes {
     private ControllerMaster controllerMaster;
     public AudioOut speakers;
     private boolean TAS = false;
-    private List<int[][]> video;
+    private List<boolean[][]> video;
     private int videoIndex;
     volatile boolean ready = false;
     volatile boolean inFrame = false;
@@ -34,6 +34,8 @@ public class Nes {
 
     Nes() {
         graphics = new Graphics(this);
+        controllerMaster = new ControllerMaster(graphics, new Controller[2]);
+        graphics.addKeyListener(controllerMaster);
     }
 
     void loadRom(String path, boolean setReadyWhenDone) throws IOException, LineUnavailableException {
@@ -47,7 +49,7 @@ public class Nes {
 
         controllers[0] = new Controller(Main.settings.controller0);
         controllers[1] = new Controller(Main.settings.controller1);
-        ControllerMaster controllerMaster = new ControllerMaster(controllers);
+        controllerMaster.controllers = controllers;
 
         romFile = new File(path);
         rom = new Rom(romFile);
@@ -58,13 +60,12 @@ public class Nes {
         ppu.setMirroring(rom.getMirroring());
 
         speakers = new AudioOut();
-        graphics.removeKeyListener(controllerMaster);
-        graphics.addKeyListener(controllerMaster);
-        for (int i = 0; i < ppu.spriteMem.length; i ++) {
-            System.out.println(ppu.spriteMem[i]);
+        for (int i = 0; i < ppu.spriteMem.length; i++) {
+            //System.out.println(ppu.spriteMem[i]);
         }
         ready = setReadyWhenDone;
     }
+
     void loadRom(String path) throws IOException, LineUnavailableException {
         loadRom(path, true);
     }
@@ -78,6 +79,7 @@ public class Nes {
     }
 
     void frame() throws Exception {
+        if (!ready) return;
         inFrame = true;
         ppu.startFrame();
         int cycles;
@@ -111,7 +113,7 @@ public class Nes {
             }
             for (; cycles > 0; cycles--) {
                 if (ppu.curX == ppu.spr0HitX && ppu.f_spVisibility == 1 && ppu.scanline - 21 == ppu.spr0HitY) {
-                    System.out.println(frameCount);
+                    //System.out.println(frameCount);
                     ppu.setStatusFlag(Ppu.STATUS_SPRITE0HIT, true);
                 }
                 if (ppu.requestEndFrame) {
@@ -150,28 +152,25 @@ public class Nes {
             if (!line.startsWith("|")) continue;
             Scanner lScan = new Scanner(line);
             lScan.useDelimiter("\\|");
-            lScan.next(); // command
-            int[] input0 = new int[8];
-            int[] input1 = new int[8];
-            for (int i = 0; i < 8; i++) {
-                input0[i] = 0x40;
-                input1[i] = 0x40;
-            }
+            lScan.nextInt(); // command
+            boolean[] input0 = new boolean[8];
+            boolean[] input1 = new boolean[8];
+
             String s = lScan.next();
             for (char c : s.toCharArray()) {
                 int i = getButton(c);
                 if (i >= 0) {
-                    input0[i] = 0x41;
+                    input0[i] = true;
                 }
             }
             s = lScan.next();
             for (char c : s.toCharArray()) {
                 int i = getButton(c);
                 if (i >= 0) {
-                    input1[i] = 0x41;
+                    input1[i] = true;
                 }
             }
-            video.add(new int[][]{input0, input1});
+            video.add(new boolean[][]{input0, input1});
         }
         graphics.removeKeyListener(controllerMaster);
         ready = true;
