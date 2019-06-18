@@ -6,6 +6,7 @@ class PHP extends Instruction {
 
     @Override
     public int run(int addr, int cycleAdd) {
+        cpu.setBreak(true);
         cpu.pushStack(cpu.status);
         return 0;
     }

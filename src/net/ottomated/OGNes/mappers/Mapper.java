@@ -59,7 +59,6 @@ public abstract class Mapper {
                 return "Taito TC0190/TC0350";
             case 34:
                 return "32kB ROM switch";
-
             case 64:
                 return "Tengen RAMBO-1 chip";
             case 65:
@@ -87,6 +86,10 @@ public abstract class Mapper {
         switch (id) {
             case 0:
                 return new DirectAccess();
+            case 1:
+                return new MMC1();
+            case 4:
+                return new MMC3();
             default:
                 throw new IllegalArgumentException("Mapper \"" + name(id) + "\" (" + id + ") not implemented");
         }
@@ -96,9 +99,9 @@ public abstract class Mapper {
 
     public abstract int read(int addr);
 
-    public abstract void latchAccess(int addr); // Does nothing. This is used by the MMC2 mapper.
+    public abstract void latchAccess(int addr);
 
-    public abstract void clockIrqCounter(); // Does nothing. This is used by the MMC3 mapper.
+    public abstract void clockIrqCounter();
 
     public abstract void write(int addr, int val);
 

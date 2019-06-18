@@ -7,6 +7,7 @@ class PLP extends Instruction {
     @Override
     public int run(int addr, int cycleAdd) {
         cpu.status = cpu.popStack();
+        cpu.setUnused(true);
         return 0;
     }
 

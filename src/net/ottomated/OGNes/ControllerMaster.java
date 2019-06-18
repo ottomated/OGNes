@@ -16,6 +16,14 @@ public class ControllerMaster implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_R) {
+            try {
+                frame.nes.loadRom(frame.nes.romFile.getPath());
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(frame, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            return;
+        }
         if (!frame.nes.ready) return;
         for (Controller c : controllers) {
             int button = c.getButton(e);
@@ -38,12 +46,5 @@ public class ControllerMaster implements KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if ((e.getModifiers() & KeyEvent.CTRL_MASK) == KeyEvent.CTRL_MASK) {
-            try {
-                frame.nes.loadRom(frame.nes.romFile.getPath());
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(frame, ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        }
     }
 }

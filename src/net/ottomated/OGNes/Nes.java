@@ -100,7 +100,7 @@ public class Nes {
                 if (cpu.cyclesToHalt > 8) {
                     cycles = 24;
                     if (sound) {
-                        apu.clockFrameCounter(cycles);
+                        apu.clockFrameCounter(8);
                     }
                     cpu.cyclesToHalt -= 8;
                 } else {
@@ -111,9 +111,9 @@ public class Nes {
                     cpu.cyclesToHalt = 0;
                 }
             }
+            System.out.println(frameCount + "  " + cycles + " " + cpu.memory[0x2002] + "  " + ppu.curX + ", " + ppu.scanline);
             for (; cycles > 0; cycles--) {
                 if (ppu.curX == ppu.spr0HitX && ppu.f_spVisibility == 1 && ppu.scanline - 21 == ppu.spr0HitY) {
-                    //System.out.println(frameCount);
                     ppu.setStatusFlag(Ppu.STATUS_SPRITE0HIT, true);
                 }
                 if (ppu.requestEndFrame) {

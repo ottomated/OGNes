@@ -189,7 +189,7 @@ public class DirectAccess extends Mapper {
         }
     }
 
-    private void loadCHRROM() {
+    void loadCHRROM() {
         if (nes.rom.vromCount > 0) {
             if (nes.rom.vromCount == 1) {
                 loadVromBank(0, 0x0000);
@@ -201,7 +201,7 @@ public class DirectAccess extends Mapper {
         }
     }
 
-    private void loadRomBank(int bank, int address) {
+    void loadRomBank(int bank, int address) {
         // Loads a ROM bank into the specified address.
         bank %= nes.rom.romCount;
         System.arraycopy(
@@ -213,7 +213,7 @@ public class DirectAccess extends Mapper {
         );
     }
 
-    private void loadVromBank(int bank, int address) {
+    void loadVromBank(int bank, int address) {
         if (nes.rom.vromCount == 0) {
             return;
         }

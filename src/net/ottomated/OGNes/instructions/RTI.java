@@ -11,7 +11,7 @@ class RTI extends Instruction {
         cpu.pc += cpu.popStack() << 8;
         if (cpu.pc == 0xffff) System.out.println("PC out of range?");
         cpu.pc--;
-        // Set unused flag
+        cpu.setUnused(true);
         return 0;
     }
 

@@ -58,6 +58,10 @@ public class Cpu {
         setStatusAt(b, 4);
     }
 
+    public void setUnused(boolean b) {
+        setStatusAt(b, 5);
+    }
+
     public void setOverflow(boolean b) {
         setStatusAt(b, 6);
     }
@@ -84,6 +88,10 @@ public class Cpu {
 
     public boolean getBreak() {
         return getStatusAt(4);
+    }
+
+    public boolean getUnused() {
+        return getStatusAt(5);
     }
 
     public boolean getOverflow() {
@@ -142,6 +150,7 @@ public class Cpu {
     private String hex(int i) {
         return Integer.toHexString(i).toUpperCase();
     }
+
     private void log(Instruction instruction, int addr) {
         System.out.print(hex(pc) + "  ");
         String bytes = hex(nes.mapper.read(pc + 1)) + " " + hex(nes.mapper.read(pc + 2)) + " " + hex(nes.mapper.read(pc + 3)) + "  ";
@@ -157,7 +166,6 @@ public class Cpu {
 
     int cycle() throws Exception {
         if (!nes.ready) return 0;
-        //System.out.print("A: " + a + " Status: " + Integer.toBinaryString(status) + " X: " + x + " Y: " + y + " PC: " + pc + " SP: " + sp + " instr: " + nes.mapper.read(pc + 1));
         if (interruptRequested) {
             pc_new = pc;
             switch (interrupt) {
@@ -176,7 +184,8 @@ public class Cpu {
             pc = pc_new;
             interruptRequested = false;
         }
-        instruction = Instruction.parse(this, nes.mapper.read(pc + 1));
+        int opcode = nes.mapper.read(pc + 1);
+        instruction = Instruction.parse(this, opcode);
         //System.out.print("0x" + Integer.toHexString(pc));
         if (instruction == null) throw new Exception("Invalid instruction");
         int addr = 0;
@@ -257,7 +266,9 @@ public class Cpu {
                 }
                 break;
         }
+
         addr &= 0xffff;
+        //System.out.println("A: " + a + " Status: " + Integer.toBinaryString(status) + " X: " + x + " Y: " + y + " PC: " + pc + " SP: " + sp + " instr: " + Integer.toHexString(opcode) + " " + Integer.toHexString(addr));
         //log(instruction, addr);
         //System.out.println("  addr: " + addr);
         //System.out.println(": "+ instruction + " 0x" + Integer.toHexString(addr));
@@ -302,26 +313,20 @@ public class Cpu {
     private void doResetInt() {
         //System.out.println(load(0xfffc) + " -- " + load(0xfffd));
         pc_new = load(0xfffc) | (load(0xfffd) << 8);
+        System.out.println(pc_new);
         pc_new--;
     }
 
     public void pushStack(int b) {
         nes.mapper.write(sp, b);
         sp--;
-        if (sp < 0x0100) sp = 0x01ff;
-        else if (sp > 0x01ff) sp = 0x0100;
+        sp = 0x0100 | (sp & 0xff);
     }
 
     public int popStack() {
         sp++;
-        if (sp < 0x0100) sp = 0x01ff;
-        else if (sp > 0x01ff) sp = 0x0100;
+        sp = 0x0100 | (sp & 0xff);
         return nes.mapper.read(sp);
-    }
-
-    public int pop() {
-        pc++;
-        return nes.mapper.read(pc - 1);
     }
 
     public int load(int addr) {

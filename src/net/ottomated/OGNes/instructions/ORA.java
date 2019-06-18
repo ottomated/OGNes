@@ -6,12 +6,12 @@ class ORA extends Instruction {
 
     @Override
     public int run(int addr, int cycleAdd) {
-        int tmp = (cpu.load(addr) | cpu.a) & 0xff;
+        int tmp = (cpu.load(addr) | cpu.a) & 255;
         cpu.setNegative(((tmp >> 7) & 1) == 1); // If the 7th bit is 1
 
         cpu.setZero(tmp == 0);
         cpu.a = tmp;
-        if (mode != AddressingMode.INDEXED_INDIRECT) return cycleAdd;
+        if (mode != AddressingMode.INDIRECT_INDEXED) return cycleAdd;
         else return 0;
     }
 

@@ -12,8 +12,15 @@ class ISC extends Instruction {
         cpu.setCarry(res >= 0);
         cpu.setNegative(((res >> 7) & 1) == 1);
         cpu.setZero((res & 0xff) == 0);
-        cpu.setOverflow(((cpu.a ^ res) & 0x80) != 0 &&
-                ((cpu.a ^ cpu.load(addr)) & 0x80) != 0);
+
+        if (
+                ((cpu.a ^ res) & 0x80) != 0 &&
+                        ((cpu.a ^ cpu.load(addr)) & 0x80) != 0
+        ) {
+            cpu.setOverflow(true);
+        } else {
+            cpu.setOverflow(false);
+        }
         cpu.a = res & 0xff;
         if (mode != AddressingMode.INDEXED_INDIRECT) return addCycles;
         else return 0;

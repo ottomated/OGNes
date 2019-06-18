@@ -139,6 +139,21 @@ public abstract class Instruction {
             case 0xCC:
                 return new CPY(cpu, AddressingMode.ABSOLUTE, 3, 4);
 
+            case 0xC3:
+                return new DCP(cpu, AddressingMode.INDEXED_INDIRECT, 2, 8);
+            case 0xC7:
+                return new DCP(cpu, AddressingMode.ZERO_PAGE, 2, 5);
+            case 0xCF:
+                return new DCP(cpu, AddressingMode.ABSOLUTE, 3, 6);
+            case 0xD3:
+                return new DCP(cpu, AddressingMode.INDIRECT_INDEXED, 2, 8);
+            case 0xD7:
+                return new DCP(cpu, AddressingMode.INDEXED_ZERO_PAGE_X, 2, 6);
+            case 0xDB:
+                return new DCP(cpu, AddressingMode.INDEXED_ABSOLUTE_Y, 3, 7);
+            case 0xDF:
+                return new DCP(cpu, AddressingMode.INDEXED_ABSOLUTE_X, 3, 7);
+
             case 0xC6:
                 return new DEC(cpu, AddressingMode.ZERO_PAGE, 2, 5);
             case 0xD6:
@@ -308,6 +323,7 @@ public abstract class Instruction {
                 return new RTS(cpu, AddressingMode.IMPLIED, 1, 6);
 
             case 0xE9:
+            case 0xEB:
                 return new SBC(cpu, AddressingMode.IMMEDIATE, 2, 2);
             case 0xE5:
                 return new SBC(cpu, AddressingMode.ZERO_PAGE, 2, 3);
@@ -356,7 +372,7 @@ public abstract class Instruction {
             case 0x84:
                 return new STY(cpu, AddressingMode.ZERO_PAGE, 2, 3);
             case 0x94:
-                return new STY(cpu, AddressingMode.INDEXED_ZERO_PAGE_Y, 2, 4);
+                return new STY(cpu, AddressingMode.INDEXED_ZERO_PAGE_X, 2, 4);
             case 0x8c:
                 return new STY(cpu, AddressingMode.ABSOLUTE, 3, 4);
 
@@ -383,6 +399,8 @@ public abstract class Instruction {
             case 0xCB:
                 return new AXS(cpu, AddressingMode.IMMEDIATE, 2, 2);
 
+            case 0xAB:
+                return new LAX(cpu, AddressingMode.IMMEDIATE, 2, 2);
             case 0xA3:
                 return new LAX(cpu, AddressingMode.INDEXED_INDIRECT, 2, 6);
             case 0xA7:

@@ -1,7 +1,5 @@
 package net.ottomated.OGNes;
 
-import com.sun.deploy.uitoolkit.impl.awt.ui.DownloadWindow;
-
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -29,8 +27,7 @@ class OGMenuBar extends JMenuBar {
         initViewMenu();
         JMenuItem download = new JMenuItem("Download");
         download.addActionListener(actionEvent -> {
-            System.out.println(actionEvent);
-            DownloaderWindow win = new DownloaderWindow(nes);
+            new DownloaderWindow(nes);
         });
         add(download);
     }

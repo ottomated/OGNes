@@ -189,7 +189,7 @@ public class Ppu {
         // Create nametable buffers:
         // Name table data:
         ntable1 = new int[4];
-        //currentMirroring = -1;
+        currentMirroring = Rom.Mirroring.NOTLOADED;
         //nameTable = new int[4];
         for (i = 0; i < 4; i++) {
             nameTable[i] = new NameTable(32, 32, "Nt" + i);
@@ -209,7 +209,7 @@ public class Ppu {
     }
 
 
-    void setMirroring(Rom.Mirroring mirroring) {
+    public void setMirroring(Rom.Mirroring mirroring) {
         if (mirroring == currentMirroring) {
             return;
         }
@@ -747,7 +747,7 @@ public class Ppu {
             spriteRamWriteUpdate(i, data);
         }
 
-        //nes.cpu.haltCycles(513);
+        nes.cpu.cyclesToHalt += 513;
     }
 
     private void regsFromAddress() {
@@ -897,17 +897,11 @@ public class Ppu {
                     if (validTileData) {
                         // Get data from array:
                         t = scantile[tile];
-                        if (t == null) {
-                            continue;
-                        }
                         tpix = t.pixels;
                         att = attrib[tile];
                     } else {
                         // Fetch data:
                         t = ptTile[baseTile + nameTable[curNt].getTileIndex(cntHT, cntVT)];
-                        if (t == null) {
-                            continue;
-                        }
                         tpix = t.pixels;
                         att = nameTable[curNt].getAttrib(cntHT, cntVT);
                         scantile[tile] = t;

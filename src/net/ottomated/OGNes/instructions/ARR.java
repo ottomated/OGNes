@@ -8,6 +8,7 @@ class ARR extends Instruction {
     public int run(int addr, int cycleAdd) {
         int res = cpu.a & cpu.load(addr);
         cpu.a = (res >> 1) + ((cpu.getCarry() ? 1 : 0) << 7);
+        cpu.setZero(cpu.a == 0);
         cpu.setNegative(cpu.getCarry());
         cpu.setCarry(((res >> 7) & 1) == 1);
         cpu.setOverflow((((res >> 7) ^ (res >> 6)) & 1) == 1);
