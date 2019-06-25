@@ -1,7 +1,11 @@
 # OGNes
 > An NES emulator written in Java
 
-**WIP**: this project is still in development
+Status:
+
+- Most games are working, mappers 0, 1, and 4 are implemented
+- No savestates yet
+- Will attempt to fix TAS desyncs eventually
 
 Resources:
 
