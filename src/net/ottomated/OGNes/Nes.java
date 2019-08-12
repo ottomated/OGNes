@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -111,7 +112,7 @@ public class Nes {
                     cpu.cyclesToHalt = 0;
                 }
             }
-            System.out.println(frameCount + "  " + cycles + " " + cpu.memory[0x2002] + "  " + ppu.curX + ", " + ppu.scanline);
+            //System.out.println(frameCount + "  " + cycles + " " + cpu.memory[0x2002] + "  " + ppu.curX + ", " + ppu.scanline);
             for (; cycles > 0; cycles--) {
                 if (ppu.curX == ppu.spr0HitX && ppu.f_spVisibility == 1 && ppu.scanline - 21 == ppu.spr0HitY) {
                     ppu.setStatusFlag(Ppu.STATUS_SPRITE0HIT, true);
@@ -171,6 +172,9 @@ public class Nes {
                 }
             }
             video.add(new boolean[][]{input0, input1});
+        }
+        for (boolean[][] frame : video) {
+            //System.out.println(Arrays.deepToString(frame));
         }
         graphics.removeKeyListener(controllerMaster);
         ready = true;
