@@ -32,8 +32,9 @@ public class Painter extends JPanel {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         g2.drawImage(img, 0, 0, 256 * Main.settings.scale, 240 * Main.settings.scale, null);
-        Font f = new Font(Font.MONOSPACED, Font.PLAIN, 20);
+        Font f = new Font(Font.MONOSPACED, Font.PLAIN, 20 * Main.settings.scale / 3);
         g2.setFont(f);
-        g2.drawString(fps, 10, 20);
+        g2.setColor(Color.white);
+        g2.drawString(fps, 10, 20 * Main.settings.scale / 3);
     }
 }
